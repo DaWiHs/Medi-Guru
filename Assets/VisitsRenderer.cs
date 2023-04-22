@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 
 public class VisitsRenderer : MonoBehaviour
 {
+    public bool active = true;
     [Header("Prefabs")]
     [SerializeField] private GameObject linePrefab;
     [SerializeField] private GameObject hourPrefab;
@@ -22,19 +24,49 @@ public class VisitsRenderer : MonoBehaviour
 
     [Header("Scroll")]
     [SerializeField] private RectTransform scrollObj;
-    [SerializeField] private LayerMask hoverMask;
+    [SerializeField] private GameObject scrollCatch;
     [SerializeField] private int maxScrollDown;
-
+    [SerializeField] private GraphicRaycaster raycaster;
+    private EventSystem eventSystem;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        eventSystem = GetComponent<EventSystem>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!active) return;
+
+        
+
+        if(Input.mouseScrollDelta.y != 0)
+        {
+            // Setup PointerEvent in place
+            PointerEventData pointerEvent = new PointerEventData(eventSystem);
+            pointerEvent.position = Input.mousePosition;
+
+            // Raycast using PointerEvent
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            raycaster.Raycast(pointerEvent, raycastResults);
+
+            foreach (RaycastResult r in raycastResults)
+            {
+                Debug.Log(r);
+                if (r.gameObject == scrollCatch)
+                {
+                    scrollObj.anchoredPosition -= new Vector2(0, Input.mouseScrollDelta.y * 10);
+                }
+            }
+        }
+
+
+        if (scrollObj.anchoredPosition.y > maxScrollDown)
+            scrollObj.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(scrollObj.anchoredPosition.y, maxScrollDown, 0.2f));
+        if (scrollObj.anchoredPosition.y < 0)
+            scrollObj.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(scrollObj.anchoredPosition.y, 0, 0.2f));
         
     }
 
@@ -48,7 +80,6 @@ public class VisitsRenderer : MonoBehaviour
 
         for (int i = 0; i <= visits; i++)
         {
-            
             if (currentMinutes >= 60)
             {
                 currentMinutes -= 60;
@@ -62,8 +93,11 @@ public class VisitsRenderer : MonoBehaviour
 
             }
 
-            if (i == visits) break;
-
+            if (i == visits)
+            {
+                maxScrollDown = (currentY * -1) - 200;
+                break;
+            }
             // Create visit plate
             // Set visit time text
             GameObject v = Instantiate(visitPrefab, todayView);
@@ -72,11 +106,7 @@ public class VisitsRenderer : MonoBehaviour
             
             currentMinutes += minutesPerVisit;
             currentY -= 15;
-
-
         }
-
-
     }
 
     private string VisitTimeText(int currentTime)
