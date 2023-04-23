@@ -15,6 +15,7 @@ public class VisitsRenderer : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private RectTransform todayView;
+    [SerializeField] private List<VisitObject> visitObjects = new List<VisitObject>();
     
     [Header("GenValues")]
     public int minutesPerVisit = 15;
@@ -25,7 +26,7 @@ public class VisitsRenderer : MonoBehaviour
     [Header("Scroll")]
     [SerializeField] private RectTransform scrollObj;
     [SerializeField] private GameObject scrollCatch;
-    [SerializeField] private int maxScrollDown;
+    private int maxScrollDown;
     [SerializeField] private GraphicRaycaster raycaster;
     private EventSystem eventSystem;
 
@@ -40,9 +41,12 @@ public class VisitsRenderer : MonoBehaviour
     {
         if (!active) return;
 
-        
+        ScrollControl();
+    }
 
-        if(Input.mouseScrollDelta.y != 0)
+    private void ScrollControl()
+    {
+        if (Input.mouseScrollDelta.y != 0)
         {
             // Setup PointerEvent in place
             PointerEventData pointerEvent = new PointerEventData(eventSystem);
@@ -54,7 +58,7 @@ public class VisitsRenderer : MonoBehaviour
 
             foreach (RaycastResult r in raycastResults)
             {
-                Debug.Log(r);
+                //Debug.Log(r);
                 if (r.gameObject == scrollCatch)
                 {
                     scrollObj.anchoredPosition -= new Vector2(0, Input.mouseScrollDelta.y * 10);
@@ -67,14 +71,14 @@ public class VisitsRenderer : MonoBehaviour
             scrollObj.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(scrollObj.anchoredPosition.y, maxScrollDown, 0.2f));
         if (scrollObj.anchoredPosition.y < 0)
             scrollObj.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(scrollObj.anchoredPosition.y, 0, 0.2f));
-        
+
     }
 
     public void RenderVisits()
     {
         int currentY = 0;
         int currentMinutes = 60;
-        int currentHour = -1;
+        int currentHour = startWorkHour - 1;
 
         int visits = (endWorkHour - startWorkHour) * 60 / minutesPerVisit;
 
@@ -89,7 +93,7 @@ public class VisitsRenderer : MonoBehaviour
 
                 GameObject h = Instantiate(hourPrefab, todayView);
                 h.GetComponent<RectTransform>().anchoredPosition = new Vector2Int(0, currentY);
-                h.GetComponentInChildren<Text>().text = (startWorkHour + currentHour) + ":00";
+                h.GetComponentInChildren<Text>().text = currentHour + ":00";
 
             }
 
@@ -102,8 +106,16 @@ public class VisitsRenderer : MonoBehaviour
             // Set visit time text
             GameObject v = Instantiate(visitPrefab, todayView);
             v.GetComponent<RectTransform>().anchoredPosition = new Vector2Int(0, currentY);
-            v.GetComponentInChildren<Text>().text = VisitTimeText((startWorkHour + currentHour) * 60 + currentMinutes);
-            
+            v.GetComponentInChildren<Text>().text = VisitTimeText(currentHour * 60 + currentMinutes);
+
+            visitObjects.Add(new VisitObject(
+                currentHour * 60 + currentMinutes, 
+                minutesPerVisit, 
+                v.GetComponentInChildren<Button>()
+                ));
+
+            v.name = "Visit_" + currentHour + "_" + currentMinutes;
+
             currentMinutes += minutesPerVisit;
             currentY -= 15;
         }
