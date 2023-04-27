@@ -1,16 +1,18 @@
+using UnityEngine;
 using UnityEngine.UI;
 
 [System.Serializable]
 public class VisitObject
 {
-    public Button button;
+    public int index;
+    public GameObject objectReference;
     public int startTime;
     public int duration;
 
-    public VisitObject(int startTime, int duration, Button buttonObject)
-    {
+    public VisitObject(int index, int startTime, int duration, GameObject objectReference)  {
+        this.index = index;
         this.startTime = startTime;
         this.duration = duration;
-        this.button = buttonObject;
+        this.objectReference = objectReference;
     }
 }
