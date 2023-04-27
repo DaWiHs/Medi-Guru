@@ -15,6 +15,8 @@ public class VisitsRenderer : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private RectTransform todayView;
+    [SerializeField] private GameObject previewObject;
+    [SerializeField] private GameObject connectImage;
     [SerializeField] private List<VisitObject> visitObjects = new List<VisitObject>();
     
     [Header("GenValues")]
@@ -109,16 +111,29 @@ public class VisitsRenderer : MonoBehaviour
             v.GetComponentInChildren<Text>().text = VisitTimeText(currentHour * 60 + currentMinutes);
 
             visitObjects.Add(new VisitObject(
+                i,
                 currentHour * 60 + currentMinutes, 
                 minutesPerVisit, 
-                v.GetComponentInChildren<Button>()
+                v
                 ));
 
             v.name = "Visit_" + currentHour + "_" + currentMinutes;
 
+            // Delegate function
+            int _i = i;
+            v.GetComponentInChildren<Button>().onClick.AddListener(delegate { ButtonDelegated(_i); });
+
+
+            // Increase timer and placement
             currentMinutes += minutesPerVisit;
             currentY -= 15;
         }
+    }
+
+    public void ButtonDelegated(int index)
+    {
+        connectImage.transform.SetParent(visitObjects[index].objectReference.transform);
+        connectImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(125f, -0.5f);
     }
 
     private string VisitTimeText(int currentTime)

@@ -526,7 +526,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 230, y: -75.000015}
+  m_AnchoredPosition: {x: 225, y: -75.000015}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &161822298
@@ -2473,6 +2473,7 @@ MonoBehaviour:
   hourPrefab: {fileID: 6177201586536605757, guid: 7853175f6dee0144494286e6869ccab9, type: 3}
   visitPrefab: {fileID: 5218933924605562067, guid: b5200117d05b22d40b4850054256ff0e, type: 3}
   todayView: {fileID: 1225453564}
+  connectImage: {fileID: 2036652934}
   visitObjects: []
   minutesPerVisit: 15
   startWorkHour: 8

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-class WebResponse
+public class WebResponse
 {
     public long code = 0;
     public string error = "";
@@ -14,6 +14,8 @@ class WebResponse
 
 public class WebRequest : MonoBehaviour
 {
+    public static WebRequest instance;
+
     public string url = "https://1ac7-5-184-235-151.eu.ngrok.io/doctors";
     
 
@@ -22,11 +24,14 @@ public class WebRequest : MonoBehaviour
     public string password = "123123";
     public string auth = "";
 
+    public WebResponse lastResponse;
+
     // Start is called before the first frame update
     void Start()
     {
         UnityWebRequest.ClearCookieCache();
         //StartCoroutine(MyFunction());
+        instance = this;
     }
 
     // Update is called once per frame
