@@ -130,8 +130,15 @@ public class VisitsRenderer : MonoBehaviour
         }
     }
 
+    public void ClosePreview()
+    {
+        previewObject.SetActive(false);
+        connectImage.SetActive(false);
+    }
     public void ButtonDelegated(int index)
     {
+        previewObject.SetActive(true);
+        connectImage.SetActive(true);
         connectImage.transform.SetParent(visitObjects[index].objectReference.transform);
         connectImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(125f, -0.5f);
     }
