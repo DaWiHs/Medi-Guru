@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 151579329}
   - component: {fileID: 151579328}
   m_Layer: 0
-  m_Name: Button_Wizyty
+  m_Name: Button_Visits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1123,7 +1123,7 @@ GameObject:
   - component: {fileID: 367050815}
   - component: {fileID: 367050814}
   m_Layer: 0
-  m_Name: Button_Profil
+  m_Name: Button_Profile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1971,7 +1971,7 @@ GameObject:
   - component: {fileID: 698045671}
   - component: {fileID: 698045670}
   m_Layer: 0
-  m_Name: Button_Opinie
+  m_Name: Button_Reviews
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2228,7 +2228,7 @@ GameObject:
   - component: {fileID: 754232610}
   - component: {fileID: 754232609}
   m_Layer: 0
-  m_Name: Button_Harmonogram
+  m_Name: Button_Schedule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2429,7 +2429,7 @@ GameObject:
   - component: {fileID: 878097769}
   - component: {fileID: 878097770}
   m_Layer: 0
-  m_Name: Wizyty
+  m_Name: Visits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2493,7 +2493,7 @@ GameObject:
   m_Component:
   - component: {fileID: 895300587}
   m_Layer: 0
-  m_Name: Grafik
+  m_Name: Schedule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3504,7 +3504,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1493576406}
   m_Layer: 0
-  m_Name: Opinie
+  m_Name: Rewiews
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4995,7 +4995,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1870750267}
   m_Layer: 0
-  m_Name: Profil
+  m_Name: Profile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5503,6 +5503,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 2054754614}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feaf71b18d79871439246fc2daafaa56, type: 3}
+  m_Script: {fileID: 11500000, guid: efb1f0242edff234cb27c5656860cdf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _scheduleButton: {fileID: 754232609}
+  _scheduleParent: {fileID: 895300586}
+  _profileButton: {fileID: 367050814}
+  _profileParent: {fileID: 1870750266}
+  _visitsButton: {fileID: 151579328}
+  _visitsScript: {fileID: 878097770}
+  _visitsParent: {fileID: 878097768}
+  _reviewsButton: {fileID: 698045670}
+  _reviewsParent: {fileID: 1493576405}
+  _activeButtonColor: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
+  _inactiveButtonColor: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 0}
+  _activeTextColor: {r: 0.9215687, g: 0.9215687, b: 0.9215687, a: 1}
+  _inactiveTextColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
