@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-public class WebResponse
+[System.Serializable] public class WebResponse
 {
     public long code = 0;
     public string error = "";
@@ -26,15 +26,18 @@ public class WebRequest : MonoBehaviour
 
     public WebResponse lastResponse;
 
-    // Start is called before the first frame update
+    private void Awake()
+    {
+        instance = this;
+
+    }
+
     void Start()
     {
         UnityWebRequest.ClearCookieCache();
         //StartCoroutine(MyFunction());
-        instance = this;
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -128,38 +131,35 @@ public class WebRequest : MonoBehaviour
         // Logout ui
     }
 
-    //IEnumerator Request(string method, string url, string bodyJson, System.Action<string> result)
-    IEnumerator Request(string method, string url, string bodyJson, WebResponse response)
+    public IEnumerator Request(string method, string url, string bodyJson, WebResponse response)
     {
         Debug.Log("Sending request:\nMethod: " + method + "\nURL:" + url + "\nDATA:" + bodyJson);
+        
         var request = new UnityWebRequest(url, method);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJson);
         request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
+        
         if (auth != "") request.SetRequestHeader("Authorization", auth);
         yield return request.SendWebRequest();
         //Encoding.UTF8.(request.downloadHandler.data)
+
+        response.code = request.responseCode;
+        response.error = request.error;
+        response.content = request.downloadHandler.text;
+
         if (request.result != UnityWebRequest.Result.Success)
         {
-            Debug.Log(request.responseCode + "\n" + request.error + "\nReceived: " + request.downloadHandler.text);
-            response.code = request.responseCode;
-            response.error = request.error;
-            response.content = request.downloadHandler.text;
-            //result(request.responseCode + "");
+            Debug.LogWarning("Response Code: " + response.code + "\n Error: " + response.error + "\nReceived: \n" + response.content);
         }
         else
         {
-            Debug.Log(request.responseCode + "\n Received: " + request.downloadHandler.text);
+            Debug.Log("Response Code: " + response.code + "\n Error: " + response.error + "\nReceived: \n" + response.content);
             if (request.GetResponseHeader("Authorization") != null)
             {
                 response.authToken = request.GetResponseHeader("Authorization");
             }
-            //result(request.downloadHandler.text);
-            //foreach (var s in request.GetResponseHeaders())
-            //{
-            //    Debug.Log("s=" + s);
-            //}
         }
         
     }
