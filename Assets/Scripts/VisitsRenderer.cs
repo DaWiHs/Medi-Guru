@@ -46,6 +46,19 @@ public class VisitsRenderer : MonoBehaviour
         ScrollControl();
     }
 
+    public void OnActivate()
+    {
+        active = true;
+        RenderVisits();
+        // TODO
+    }
+    public void OnDeactivate()
+    {
+        active = false;
+        RemoveRender();
+        // TODO
+    }
+
     private void ScrollControl()
     {
         if (Input.mouseScrollDelta.y != 0)
@@ -127,6 +140,15 @@ public class VisitsRenderer : MonoBehaviour
             // Increase timer and placement
             currentMinutes += minutesPerVisit;
             currentY -= 15;
+        }
+    }
+
+    public void RemoveRender()
+    {
+        foreach(Transform child in todayView.GetComponentsInChildren<Transform>())
+        {
+            if (child.gameObject == todayView.gameObject) continue;
+            if (child != null) Destroy(child.gameObject);
         }
     }
 
