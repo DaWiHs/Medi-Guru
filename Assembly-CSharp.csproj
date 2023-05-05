@@ -63,6 +63,8 @@
     <Compile Include="Assets\SpecialitiesController.cs" />
     <Compile Include="Assets\Scripts\AccountManager.cs" />
     <Compile Include="Assets\MyInputField.cs" />
+    <Compile Include="Assets\RaycastUtilities.cs" />
+    <Compile Include="Assets\ProfileController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

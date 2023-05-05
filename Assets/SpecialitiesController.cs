@@ -8,8 +8,8 @@ public class SpecialitiesController : MonoBehaviour
     [Header("References")]
     [SerializeField] GameObject specialityPrefab;
     [SerializeField] RectTransform specialitiesParent;
-    [SerializeField] InputField searchInput;
     [SerializeField] MyInputField mySearchInput;
+    [SerializeField] GameObject dropdown;
 
     [SerializeField] Dictionary<string, GameObject> searchValues = new Dictionary<string, GameObject>();
 
@@ -21,21 +21,28 @@ public class SpecialitiesController : MonoBehaviour
     void Start()
     {
         RenderSpecialities();
-        searchInput.onValueChanged.AddListener(delegate { SearchSpecialities(); });
+        mySearchInput.onValueChanged.AddListener(delegate { SearchSpecialities(); });
 
-        mySearchInput.OnFocus(delegate { CallTest("OnFocus MyInputField"); });
-        mySearchInput.OnLostFocus(delegate { CallTest("OnLostFocus MyInputField"); });
+        mySearchInput.OnFocus(delegate { ShowDropdown(); });
+        //mySearchInput.OnLostFocus(delegate { Invoke("HideDropdown", 0.1f); });
     }
 
-    // Update is called once per frame
     void Update()
     {
 
+        if (!ProfileController.instance.active) return;
+
+        if(Input.GetMouseButtonDown(0)) OnClick();
+        
     }
 
-    public void CallTest(string text)
+    void OnClick()
     {
-        Debug.Log(text);
+        GameObject[] targets = { dropdown, mySearchInput.gameObject };
+        if (!RaycastUtilities.PointerOverAnyUIElement(targets))
+        {
+            HideDropdown();
+        }
     }
 
     public void RenderSpecialities() { StartCoroutine(_RenderSpecialities()); }
@@ -58,22 +65,18 @@ public class SpecialitiesController : MonoBehaviour
             t.anchoredPosition = new Vector2Int(0, currentY);
 
             // Obj update
+            obj.name = "Speciality_" + speciality;
             obj.GetComponentInChildren<Text>().text = speciality;
             string _s = speciality;
             Button _b = obj.GetComponentInChildren<Button>();
 
             _b.onClick.AddListener(delegate { SelectSpeciality(_s, _b); });
 
-            obj.name = "Speciality_" + speciality;
-
-            
-
 
             // Render options update
             currentY -= 20 + 1;
-            
-        }
 
+        }
     }
 
     public IEnumerator GetSpecialities()
@@ -111,7 +114,7 @@ public class SpecialitiesController : MonoBehaviour
     private void SearchSpecialities()
     {
         List<string> found = new List<string>();
-        string searchWord = searchInput.text;
+        string searchWord = mySearchInput.text;
 
         foreach (string item in specialities)
         {
@@ -136,6 +139,16 @@ public class SpecialitiesController : MonoBehaviour
                 searchValues[speciality].SetActive(false);
             }
         }
+    }
+
+    private void ShowDropdown()
+    {
+        dropdown.SetActive(true);
+    }
+
+    private void HideDropdown()
+    {
+        dropdown.SetActive(false);
     }
 
 }
