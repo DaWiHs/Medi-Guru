@@ -150,6 +150,7 @@ public class VisitsRenderer : MonoBehaviour
             if (child.gameObject == todayView.gameObject) continue;
             if (child != null) Destroy(child.gameObject);
         }
+        visitObjects.Clear();
     }
 
     public void ClosePreview()

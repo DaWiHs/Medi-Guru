@@ -9,8 +9,10 @@ Logs/
 obj/
 Temp/
 UserSettings/
+_Build/
 
 # User-specific files
+Assembly-CSharp.csproj
 *.rsuser
 *.suo
 *.user
