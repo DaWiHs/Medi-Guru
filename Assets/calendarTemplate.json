@@ -1,0 +1,138 @@
+{
+    "name": "",
+    "speciality": "",
+    "calendar": {
+        "monday": [
+            { "hour": 8, "minute": 0  },
+            { "hour": 8, "minute": 15 },
+            { "hour": 8, "minute": 30 },
+            { "hour": 8, "minute": 45 },
+            { "hour": 9, "minute": 0  },
+            { "hour": 9, "minute": 15 },
+            { "hour": 9, "minute": 30 },
+            { "hour": 9, "minute": 45 }
+        ],
+        "tuesday": [
+            {
+                "hour": 8,
+                "minute": 0
+            },
+            {
+                "hour": 8,
+                "minute": 15
+            },
+            {
+                "hour": 8,
+                "minute": 30
+            },
+            {
+                "hour": 8,
+                "minute": 45
+            },
+            {
+                "hour": 9,
+                "minute": 0
+            },
+            {
+                "hour": 9,
+                "minute": 15
+            },
+            {
+                "hour": 9,
+                "minute": 30
+            },
+            {
+                "hour": 9,
+                "minute": 45
+            }
+        ],
+        "wednesday": [
+            {
+                "hour": 8,
+                "minute": 0
+            },
+            {
+                "hour": 8,
+                "minute": 15
+            },
+            {
+                "hour": 8,
+                "minute": 30
+            },
+            {
+                "hour": 8,
+                "minute": 45
+            },
+            {
+                "hour": 9,
+                "minute": 0
+            },
+            {
+                "hour": 9,
+                "minute": 15
+            },
+            {
+                "hour": 9,
+                "minute": 30
+            },
+            {
+                "hour": 9,
+                "minute": 45
+            }
+        ],
+        "thursday": [
+            {
+                "hour": 8,
+                "minute": 0
+            },
+            {
+                "hour": 8,
+                "minute": 15
+            },
+            {
+                "hour": 8,
+                "minute": 30
+            },
+            {
+                "hour": 8,
+                "minute": 45
+            },
+            {
+                "hour": 9,
+                "minute": 0
+            },
+            {
+                "hour": 9,
+                "minute": 15
+            },
+            {
+                "hour": 9,
+                "minute": 30
+            },
+            {
+                "hour": 9,
+                "minute": 45
+            }
+        ],
+        "friday": [
+            {
+                "hour": 8,
+                "minute": 0
+            },
+            {
+                "hour": 8,
+                "minute": 15
+            },
+            {
+                "hour": 8,
+                "minute": 30
+            },
+            {
+                "hour": 8,
+                "minute": 45
+            }
+        ],
+        "saturday": [],
+        "sunday": []
+    }
+}
