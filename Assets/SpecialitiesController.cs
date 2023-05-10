@@ -8,7 +8,7 @@ public class SpecialitiesController : MonoBehaviour
     [Header("References")]
     [SerializeField] GameObject specialityPrefab;
     [SerializeField] RectTransform specialitiesParent;
-    [SerializeField] MyInputField mySearchInput;
+    [SerializeField] MyInputField specialitySearchInput;
     [SerializeField] GameObject dropdown;
 
     [SerializeField] Dictionary<string, GameObject> searchValues = new Dictionary<string, GameObject>();
@@ -21,9 +21,9 @@ public class SpecialitiesController : MonoBehaviour
     void Start()
     {
         RenderSpecialities();
-        mySearchInput.onValueChanged.AddListener(delegate { SearchSpecialities(); });
+        specialitySearchInput.onValueChanged.AddListener(delegate { SearchSpecialities(); });
 
-        mySearchInput.OnFocus(delegate { ShowDropdown(); });
+        specialitySearchInput.OnFocus(delegate { ShowDropdown(); });
         //mySearchInput.OnLostFocus(delegate { Invoke("HideDropdown", 0.1f); });
     }
 
@@ -38,7 +38,7 @@ public class SpecialitiesController : MonoBehaviour
 
     void OnClick()
     {
-        GameObject[] targets = { dropdown, mySearchInput.gameObject };
+        GameObject[] targets = { dropdown, specialitySearchInput.gameObject };
         if (!RaycastUtilities.PointerOverAnyUIElement(targets))
         {
             HideDropdown();
@@ -97,7 +97,7 @@ public class SpecialitiesController : MonoBehaviour
     public void SelectSpeciality(string speciality, Button reference)
     {
         // Speciality searchbox update
-        mySearchInput.text = speciality;
+        specialitySearchInput.text = speciality;
 
         // Profile update
         ProfileController.instance.SetSpeciality(speciality);
@@ -112,7 +112,7 @@ public class SpecialitiesController : MonoBehaviour
     private void SearchSpecialities()
     {
         List<string> found = new List<string>();
-        string searchWord = mySearchInput.text;
+        string searchWord = specialitySearchInput.text;
 
         foreach (string item in specialities)
         {
