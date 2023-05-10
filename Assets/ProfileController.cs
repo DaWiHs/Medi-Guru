@@ -133,9 +133,6 @@ public class ProfileController : MonoBehaviour
         tempProfile.calendar.PopulateDay(WeekDay.friday, 8, 9, 15);
         tempProfile.calendar.ClearDay(WeekDay.saturday);
         tempProfile.calendar.ClearDay(WeekDay.sunday);
-
-        Debug.Log(JsonUtility.ToJson(tempProfile));
-
     }
 
     // Update is called once per frame
@@ -148,6 +145,25 @@ public class ProfileController : MonoBehaviour
     public void SetSpeciality(string speciality)
     {
         tempProfile.speciality = speciality;
+        unsavedChanges = true;
     }
+
+    public void SaveChanges()
+    {
+        StartCoroutine(_SaveChanges());
+    }
+    private IEnumerator _SaveChanges()
+    {
+        yield return null;
+
+        string json = JsonUtility.ToJson(tempProfile);
+
+        Debug.Log("Profile:\n" + json);
+
+        currentProfile = JsonUtility.FromJson<Profile>(json);
+
+        unsavedChanges = false;
+    }
+
 
 }

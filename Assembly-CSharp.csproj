@@ -59,12 +59,13 @@
     <Compile Include="Assets\Scripts\VisitObject.cs" />
     <Compile Include="Assets\Scripts\VisitsRenderer.cs" />
     <Compile Include="Assets\Scripts\WebRequest.cs" />
+    <Compile Include="Assets\ProfileController.cs" />
+    <Compile Include="Assets\MyInputField.cs" />
     <Compile Include="Assets\MenuController.cs" />
     <Compile Include="Assets\SpecialitiesController.cs" />
-    <Compile Include="Assets\Scripts\AccountManager.cs" />
-    <Compile Include="Assets\MyInputField.cs" />
     <Compile Include="Assets\RaycastUtilities.cs" />
-    <Compile Include="Assets\ProfileController.cs" />
+    <Compile Include="Assets\DebugScript.cs" />
+    <Compile Include="Assets\Scripts\AccountManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

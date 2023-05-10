@@ -67,8 +67,8 @@ public class SpecialitiesController : MonoBehaviour
             // Obj update
             obj.name = "Speciality_" + speciality;
             obj.GetComponentInChildren<Text>().text = speciality;
-            string _s = speciality;
-            Button _b = obj.GetComponentInChildren<Button>();
+            string _s = speciality;                             // Copy for delegate
+            Button _b = obj.GetComponentInChildren<Button>();   // Copy for delegate
 
             _b.onClick.AddListener(delegate { SelectSpeciality(_s, _b); });
 
@@ -96,19 +96,17 @@ public class SpecialitiesController : MonoBehaviour
 
     public void SelectSpeciality(string speciality, Button reference)
     {
+        // Speciality searchbox update
+        mySearchInput.text = speciality;
+
         // Profile update
-        // Toggle image update
-        Image _img = reference.transform.GetChild(0).GetComponentInChildren<Image>();
-        
-        if (_img.color == toggleEnabled)
-        {
-            _img.color = toggleDisabled;
-            // Profil update TODO
-        } else
-        {
-            _img.color = toggleEnabled;
-            // Profil Update TODO 
-        }
+        ProfileController.instance.SetSpeciality(speciality);
+
+        // Remove focus
+        //mySearchInput.interactable = false;
+        //mySearchInput.interactable = true;
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        HideDropdown();
     }
 
     private void SearchSpecialities()
