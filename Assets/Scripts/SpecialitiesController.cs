@@ -30,7 +30,7 @@ public class SpecialitiesController : MonoBehaviour
     void Update()
     {
 
-        if (!ProfileController.instance.active) return;
+        if (!ProfileController.instance.Active) return;
 
         if(Input.GetMouseButtonDown(0)) OnClick();
         

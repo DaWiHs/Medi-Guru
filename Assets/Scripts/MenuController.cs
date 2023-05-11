@@ -15,10 +15,12 @@ public class MenuController : MonoBehaviour
 {
     [Header("Schedule")]
     [SerializeField] private Button _scheduleButton;
+    [SerializeField] private ScheduleController _scheduleScript;
     [SerializeField] private GameObject _scheduleParent;
 
     [Header("Profile")]
     [SerializeField] private Button _profileButton;
+    [SerializeField] private ProfileController _profileScript;
     [SerializeField] private GameObject _profileParent;
 
     [Header("Visits")]
@@ -28,6 +30,7 @@ public class MenuController : MonoBehaviour
 
     [Header("Reviews")]
     [SerializeField] private Button _reviewsButton;
+    [SerializeField] private ReviewsController _reviewsScript;
     [SerializeField] private GameObject _reviewsParent;
 
     [Header("Variables")]
@@ -56,10 +59,12 @@ public class MenuController : MonoBehaviour
         _scheduleParent.SetActive(false);
         _scheduleButton.GetComponent<Image>().color = _inactiveButtonColor;
         _scheduleButton.GetComponentInChildren<Text>().color = _inactiveTextColor;
+        _scheduleScript.OnDeactivate();
 
         _profileParent.SetActive(false);
         _profileButton.GetComponent<Image>().color = _inactiveButtonColor;
         _profileButton.GetComponentInChildren<Text>().color = _inactiveTextColor;
+        _profileScript.OnDeactivate();
 
         _visitsParent.SetActive(false);
         _visitsButton.GetComponent<Image>().color = _inactiveButtonColor;
@@ -69,6 +74,7 @@ public class MenuController : MonoBehaviour
         _reviewsParent.SetActive(false);
         _reviewsButton.GetComponent<Image>().color = _inactiveButtonColor;
         _reviewsButton.GetComponentInChildren<Text>().color = _inactiveTextColor;
+        _reviewsScript.OnDeactivate();
     }
 
     void OpenMenu(MenuState state)

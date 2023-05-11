@@ -7,7 +7,8 @@ using UnityEngine.EventSystems;
 
 public class VisitsRenderer : MonoBehaviour
 {
-    public bool active = true;
+    public bool Active { get; private set; }
+
     [Header("Prefabs")]
     [SerializeField] private GameObject linePrefab;
     [SerializeField] private GameObject hourPrefab;
@@ -41,20 +42,20 @@ public class VisitsRenderer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!active) return;
+        if (!Active) return;
 
         ScrollControl();
     }
 
     public void OnActivate()
     {
-        active = true;
+        Active = true;
         RenderVisits();
         // TODO
     }
     public void OnDeactivate()
     {
-        active = false;
+        Active = false;
         RemoveRender();
         // TODO
     }

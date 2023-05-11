@@ -13,6 +13,7 @@ _Build/
 
 # User-specific files
 Assembly-CSharp.csproj
+*.csproj
 *.rsuser
 *.suo
 *.user

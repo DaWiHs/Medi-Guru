@@ -113,7 +113,8 @@ public enum WeekDay
 public class ProfileController : MonoBehaviour
 {
     public static ProfileController instance;
-    public bool active = true;
+    public bool Active { get; private set; }
+
 
     [Header("Profile")]
     [SerializeField] bool unsavedChanges = false;
@@ -160,7 +161,7 @@ public class ProfileController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!active) return;
+        if (!Active) return;
 
         if (unsavedChanges)
         {
@@ -169,6 +170,16 @@ public class ProfileController : MonoBehaviour
         }
     }
 
+    public void OnActivate()
+    {
+        Active = true;
+        // TODO
+    }
+    public void OnDeactivate()
+    {
+        Active = false;
+        // TODO
+    }
 
     public void SetSpeciality(string speciality)
     {
