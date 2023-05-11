@@ -23,7 +23,7 @@ public static class RaycastUtilities
         if (hits.Contains(element)) return true;
         return false;
     }
-    public static bool PointerOverAnyUIElement(GameObject[] elements)
+    public static bool PointerOverAnyUIElement(ICollection<GameObject> elements)
     {
         List<GameObject> hits = new List<GameObject>();
         UIRaycasts(ScreenPosToPointerData(Input.mousePosition)).ForEach((item) => { hits.Add(item.gameObject); });
