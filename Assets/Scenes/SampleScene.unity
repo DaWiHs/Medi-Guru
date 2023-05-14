@@ -1894,7 +1894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc524cd40f3aa7148942ba00d75d7b58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: https://mediguru.fly.dev
+  url: https://9ce8-31-60-91-113.ngrok-free.app/
   email: doctor@mail.com
   password: 123123
   auth: 
@@ -1930,11 +1930,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf9e88f444b986c45bd7b1f46219a3b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentAccount:
-    id: 0
-    serverAuthToken: 
-    email: 
-  savedAccounts: []
 --- !u!1 &304244569
 GameObject:
   m_ObjectHideFlags: 0

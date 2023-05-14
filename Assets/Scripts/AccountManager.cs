@@ -16,7 +16,7 @@ public class AccountManager : MonoBehaviour
     public static AccountManager instance;
     public static bool loggedIn = false;
 
-    [SerializeField] public static Account currentAccount;
+    [SerializeField] public Account currentAccount;
 
     private void Awake()
     {
@@ -26,6 +26,7 @@ public class AccountManager : MonoBehaviour
             Destroy(gameObject);
         }
         instance = this;
+        currentAccount = new Account();
     }
 
     // Start is called before the first frame update

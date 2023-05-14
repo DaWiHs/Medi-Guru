@@ -1,7 +1,13 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
+
+class APISpecialties
+{
+    public string name;
+}
 
 public class SpecialitiesController : MonoBehaviour
 {
@@ -84,14 +90,16 @@ public class SpecialitiesController : MonoBehaviour
         WebResponse response = new WebResponse();
 
         yield return StartCoroutine(WebRequest.Request(
-            "GET", 
-            "https://raw.githubusercontent.com/hykare/mediguru/devise-api/lib/specialties.txt",
+            "GET",
+            WebRequest.instance.url + "/specialties.json",
             "",
             response));
 
-        specialities.AddRange(response.content.Split('\n'));
-        specialities.Sort();
+        JsonConvert.DeserializeObject<List<APISpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name); });
 
+        //specialities.AddRange(JsonUtility.FromJson<APISpecialty>(response.content));
+        //specialities.Sort();
+        yield return null;
     }
 
     public void SelectSpeciality(string speciality, Button reference)
