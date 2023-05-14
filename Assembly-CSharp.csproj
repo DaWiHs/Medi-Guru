@@ -57,7 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\VisitObject.cs" />
+    <Compile Include="Assets\Scripts\ReviewsController.cs" />
     <Compile Include="Assets\Scripts\VisitsRenderer.cs" />
+    <Compile Include="Assets\Scripts\ScheduleController.cs" />
     <Compile Include="Assets\Scripts\WebRequest.cs" />
     <Compile Include="Assets\Scripts\ProfileController.cs" />
     <Compile Include="Assets\Scripts\MyInputField.cs" />
@@ -66,8 +68,6 @@
     <Compile Include="Assets\Scripts\RaycastUtilities.cs" />
     <Compile Include="Assets\Scripts\DebugScript.cs" />
     <Compile Include="Assets\Scripts\AccountManager.cs" />
-    <Compile Include="Assets\Scripts\ScheduleController.cs" />
-    <Compile Include="Assets\Scripts\ReviewsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

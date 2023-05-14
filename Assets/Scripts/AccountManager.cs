@@ -16,8 +16,7 @@ public class AccountManager : MonoBehaviour
     public static AccountManager instance;
     public static bool loggedIn = false;
 
-    [SerializeField] public Account currentAccount;
-    [SerializeField] public List<Account> savedAccounts = new List<Account>();
+    [SerializeField] public static Account currentAccount;
 
     private void Awake()
     {

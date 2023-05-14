@@ -114,7 +114,7 @@ public class WebRequest : MonoBehaviour
             "{ \"doctor\": { \"email\": \"doctor6@mail.com\", \"password\":\"123123\" } }", 
             response));
 
-        AccountManager.instance.currentAccount.serverAuthToken = response.authToken;
+        AccountManager.currentAccount.serverAuthToken = response.authToken;
 
         Debug.Log("Login ended, result: " + requestResult);
         // Login UI
@@ -131,7 +131,7 @@ public class WebRequest : MonoBehaviour
         // Logout ui
     }
 
-    public IEnumerator Request(string method, string url, string bodyJson, WebResponse response)
+    public static IEnumerator Request(string method, string url, string bodyJson, WebResponse response)
     {
         Debug.Log("Sending request:\nMethod: " + method + "\nURL:" + url + "\nDATA:" + bodyJson);
         
@@ -141,7 +141,7 @@ public class WebRequest : MonoBehaviour
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
         
-        if (auth != "") request.SetRequestHeader("Authorization", auth);
+        if (AccountManager.currentAccount.serverAuthToken != "") request.SetRequestHeader("Authorization", AccountManager.currentAccount.serverAuthToken);
         yield return request.SendWebRequest();
         //Encoding.UTF8.(request.downloadHandler.data)
 

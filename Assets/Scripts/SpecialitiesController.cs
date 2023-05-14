@@ -83,7 +83,7 @@ public class SpecialitiesController : MonoBehaviour
     {
         WebResponse response = new WebResponse();
 
-        yield return StartCoroutine(WebRequest.instance.Request(
+        yield return StartCoroutine(WebRequest.Request(
             "GET", 
             "https://raw.githubusercontent.com/hykare/mediguru/devise-api/lib/specialties.txt",
             "",
