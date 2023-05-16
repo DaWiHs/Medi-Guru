@@ -2312,6 +2312,7 @@ GameObject:
   - component: {fileID: 303881519}
   - component: {fileID: 303881518}
   - component: {fileID: 303881520}
+  - component: {fileID: 303881521}
   m_Layer: 0
   m_Name: ApplicationManager
   m_TagString: Untagged
@@ -2372,6 +2373,18 @@ MonoBehaviour:
     id: 0
     serverAuthToken: 
     email: 
+--- !u!114 &303881521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303881517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b9e9139ffc7c1e4c8890a8d23ff677e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &304244569
 GameObject:
   m_ObjectHideFlags: 0
@@ -15376,7 +15389,11 @@ MonoBehaviour:
   appView: {fileID: 1093843716}
   loginView: {fileID: 655599032}
   debugMenu: {fileID: 679982481}
-  urlInput: {fileID: 0}
+  urlInput: {fileID: 290678806}
+  connectionStatus: {fileID: 123402359}
+  connectionTesting: {fileID: 21300000, guid: 1781bb42648c3924a9b0ca9bc4ffa336, type: 3}
+  connectionOk: {fileID: 21300000, guid: 8c89f3ac7d9a70042952c6ad7ff65932, type: 3}
+  connectionError: {fileID: 21300000, guid: 8728cd0025414124b8fd4d4a8fc5737b, type: 3}
 --- !u!1 &1895472907
 GameObject:
   m_ObjectHideFlags: 0

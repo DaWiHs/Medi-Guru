@@ -2,21 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable] public class Account
-{
-    public int id = 0;
-    public string serverAuthToken = "";
-    public string email = "";
-    
-    // public Calendar calendar = new Calendar();
-}
+
 
 public class AccountManager : MonoBehaviour
 {
     public static AccountManager instance;
     public static bool loggedIn = false;
 
-    [SerializeField] public Account currentAccount;
+    [SerializeField] public MGAccount currentAccount;
 
     private void Awake()
     {
@@ -26,7 +19,7 @@ public class AccountManager : MonoBehaviour
             Destroy(gameObject);
         }
         instance = this;
-        currentAccount = new Account();
+        currentAccount = new MGAccount();
     }
 
     // Start is called before the first frame update
