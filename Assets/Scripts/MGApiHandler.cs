@@ -47,13 +47,20 @@ public class DebugScript : MonoBehaviour
         connectionStatus.sprite = connectionTesting;
         StartCoroutine(MGApi.TestConnection(delegate { ConnectionOk(); }, delegate { ConnectionError(); }));
     }
-    void ConnectionOk()
+    void ConnectionOk() { connectionStatus.sprite = connectionOk; }
+    void ConnectionError() { connectionStatus.sprite = connectionError; }
+
+    public void Login() { StartCoroutine(_Login()); }
+    private IEnumerator _Login()
     {
-        connectionStatus.sprite = connectionOk;
-    }
-    void ConnectionError()
-    {
-        connectionStatus.sprite = connectionError;
+        WebResponse response = new WebResponse();
+        MGLoginCredentials credentials = new MGLoginCredentials();
+        credentials.email = "";
+        credentials.password = "";
+        MGAccount account = new MGAccount();
+
+        yield return MGApi.Login(credentials, account);
+
     }
 
 }

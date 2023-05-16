@@ -34,7 +34,7 @@ public class MGApi : MonoBehaviour
         yield return WebRequest.Request("POST", serverURL + "/doctors/sign_in", 
             JsonUtility.ToJson(creditials), response);
 
-        if (response.result == "success")
+        if (response.code == 200)
         {
             account.email = creditials.email;
             account.serverAuthToken = response.authToken;
