@@ -8,6 +8,7 @@ public class MGApiHandler : MonoBehaviour
     [Header("References")]
     [SerializeField] InputField emailField;
     [SerializeField] InputField passwordField;
+    [SerializeField] Text specialtyIdText;
 
 
     [Header("DEBUG")]
@@ -95,6 +96,7 @@ public class MGApiHandler : MonoBehaviour
         MGLogin credentials = new MGLogin();
         credentials.doctor.email = emailField.text;
         credentials.doctor.password = passwordField.text;
+        credentials.doctor.specialty_id = int.Parse(specialtyIdText.text);
 
         yield return MGApi.Register(credentials, OnRegisterSuccess, OnRegisterFail);
 

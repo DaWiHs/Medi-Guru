@@ -15,12 +15,13 @@ public class SpecialitiesController : MonoBehaviour
     [SerializeField] GameObject specialityPrefab;
     [SerializeField] RectTransform specialitiesParent;
     [SerializeField] MyInputField specialitySearchInput;
+    [SerializeField] Text specialitySelectedId;
     [SerializeField] GameObject dropdown;
 
     [SerializeField] Dictionary<string, GameObject> searchValues = new Dictionary<string, GameObject>();
 
     [Header("Variables")]
-    public List<string> specialities = new List<string>();
+    public Dictionary<string, int> specialities = new Dictionary<string, int>();
     //public Color toggleDisabled;
     //public Color toggleEnabled;
 
@@ -55,7 +56,7 @@ public class SpecialitiesController : MonoBehaviour
 
         // Render
         int currentY = 0;
-        foreach (string speciality in specialities)
+        foreach (string speciality in specialities.Keys)
         {
             // Generate
             GameObject obj = Instantiate(specialityPrefab, specialitiesParent);
@@ -70,9 +71,10 @@ public class SpecialitiesController : MonoBehaviour
             obj.name = "Speciality_" + speciality;
             obj.GetComponentInChildren<Text>().text = speciality;
             string _s = speciality;                             // Copy for delegate
+            int _i = specialities[speciality];                             // Copy for delegate
             Button _b = obj.GetComponentInChildren<Button>();   // Copy for delegate
 
-            _b.onClick.AddListener(delegate { SelectSpeciality(_s, _b); });
+            _b.onClick.AddListener(delegate { SelectSpeciality(_s, _i, _b); });
 
 
             // Render options update
@@ -90,18 +92,19 @@ public class SpecialitiesController : MonoBehaviour
             WebRequest.instance.url + "/specialties.json",
             "",
             response));
-
-        JsonConvert.DeserializeObject<List<APISpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name); });
+        int index = 1;
+        JsonConvert.DeserializeObject<List<APISpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name, index++); });
 
         //specialities.AddRange(JsonUtility.FromJson<APISpecialty>(response.content));
         //specialities.Sort();
         yield return null;
     }
 
-    public void SelectSpeciality(string speciality, Button reference)
+    public void SelectSpeciality(string speciality, int id, Button reference)
     {
         // Speciality searchbox update
         specialitySearchInput.text = speciality;
+        specialitySelectedId.text = id + "";
 
         // Profile update
         if (ProfileController.instance != null) ProfileController.instance.SetSpeciality(speciality);
@@ -118,13 +121,13 @@ public class SpecialitiesController : MonoBehaviour
         List<string> found = new List<string>();
         string searchWord = specialitySearchInput.text;
 
-        foreach (string item in specialities)
+        foreach (string item in specialities.Keys)
         {
             if (item.Contains(searchWord)) found.Add(item);
         }
 
         int currentY = 0;
-        foreach (string speciality in specialities)
+        foreach (string speciality in specialities.Keys)
         {
             if (found.Contains(speciality))
             {
