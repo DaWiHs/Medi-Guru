@@ -21,8 +21,8 @@ public class SpecialitiesController : MonoBehaviour
 
     [Header("Variables")]
     public List<string> specialities = new List<string>();
-    public Color toggleDisabled;
-    public Color toggleEnabled;
+    //public Color toggleDisabled;
+    //public Color toggleEnabled;
 
     void Start()
     {
@@ -35,11 +35,7 @@ public class SpecialitiesController : MonoBehaviour
 
     void Update()
     {
-
-        if (!ProfileController.instance.Active) return;
-
         if(Input.GetMouseButtonDown(0)) OnClick();
-        
     }
 
     void OnClick()
@@ -108,7 +104,7 @@ public class SpecialitiesController : MonoBehaviour
         specialitySearchInput.text = speciality;
 
         // Profile update
-        ProfileController.instance.SetSpeciality(speciality);
+        if (ProfileController.instance != null) ProfileController.instance.SetSpeciality(speciality);
 
         // Remove focus
         //mySearchInput.interactable = false;
