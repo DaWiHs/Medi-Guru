@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DebugScript : MonoBehaviour
+public class MGApiHandler : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] InputField emailField;
+    [SerializeField] InputField passwordField;
 
+
+    [Header("DEBUG")]
     public GameObject appView;
     public GameObject loginView;
 
@@ -21,14 +26,15 @@ public class DebugScript : MonoBehaviour
     void Start()
     {
         urlInput.text = WebRequest.instance.url;
+        MGApi.serverURL = WebRequest.instance.url;
     }
 
-    public void OpenApp()
+    public void OpenAppView()
     {
         appView.SetActive(true);
         loginView.SetActive(false);
     }
-    public void OpenLogin()
+    public void OpenLoginView()
     {
         appView.SetActive(false);
         loginView.SetActive(true);
@@ -53,14 +59,54 @@ public class DebugScript : MonoBehaviour
     public void Login() { StartCoroutine(_Login()); }
     private IEnumerator _Login()
     {
-        WebResponse response = new WebResponse();
-        MGLoginCredentials credentials = new MGLoginCredentials();
-        credentials.email = "";
-        credentials.password = "";
+        // Initialize variables
+        MGLogin credentials = new MGLogin();
+        credentials.doctor.email = emailField.text;
+        credentials.doctor.password = passwordField.text;
+
         MGAccount account = new MGAccount();
 
-        yield return MGApi.Login(credentials, account);
+
+        yield return MGApi.Login(credentials, account, OnLoginSuccess, OnLoginFail);
+
+        //if (account.serverAuthToken != "")
+        //{
+        //    Debug.Log("Login Success");
+        //} else
+        //{
+        //    Debug.Log("Login Fail");
+        //}
 
     }
+    private void OnLoginSuccess()
+    {
+        Debug.Log("Login success");
+        // TODO UI
+    }
+    private void OnLoginFail(string message)
+    {
+        Debug.Log("Login fail: " + message);
+        // TODO UI
+    }
+    public void Register() { StartCoroutine(_Register()); }
+    private IEnumerator _Register()
+    {
+        // Initialize variables
+        MGLogin credentials = new MGLogin();
+        credentials.doctor.email = emailField.text;
+        credentials.doctor.password = passwordField.text;
 
+        yield return MGApi.Register(credentials, OnRegisterSuccess, OnRegisterFail);
+
+    }
+    private void OnRegisterSuccess()
+    {
+        Debug.Log("Register success");
+        // TODO UI
+    }
+    private void OnRegisterFail(string message)
+    {
+        Debug.Log("Register fail: " + message);
+        // TODO UI
+    }
 }

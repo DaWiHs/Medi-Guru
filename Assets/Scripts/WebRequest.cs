@@ -119,6 +119,8 @@ public class WebRequest : MonoBehaviour
         response.error = request.error;
         response.content = request.downloadHandler.text;
 
+        instance.lastResponse = response;
+
         if (request.result != UnityWebRequest.Result.Success)
         {
             Debug.LogWarning("Response Code: " + response.code + "\n Error: " + response.error + "\nReceived: \n" + response.content);
