@@ -66,9 +66,10 @@
     <Compile Include="Assets\Scripts\MenuController.cs" />
     <Compile Include="Assets\Scripts\SpecialitiesController.cs" />
     <Compile Include="Assets\Scripts\RaycastUtilities.cs" />
+    <Compile Include="Assets\Scripts\MGApi.cs" />
     <Compile Include="Assets\Scripts\MGApiHandler.cs" />
     <Compile Include="Assets\Scripts\AccountManager.cs" />
-    <Compile Include="Assets\Scripts\MGApi.cs" />
+    <Compile Include="Assets\Scripts\PopupController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\link.xml" />

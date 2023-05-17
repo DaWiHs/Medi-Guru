@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -65,29 +65,33 @@ public class MGApiHandler : MonoBehaviour
         credentials.doctor.email = emailField.text;
         credentials.doctor.password = passwordField.text;
 
-        MGAccount account = new MGAccount();
+        WebResponse response = new WebResponse();
 
+        yield return MGApi.Login(credentials, response);
 
-        yield return MGApi.Login(credentials, account, OnLoginSuccess, OnLoginFail);
+        (string message, bool success) = MGApi.MessageTranslate(response);
 
-        //if (account.serverAuthToken != "")
-        //{
-        //    Debug.Log("Login Success");
-        //} else
-        //{
-        //    Debug.Log("Login Fail");
-        //}
-
+        if (success)
+        {
+            AccountManager.instance.currentAccount.email = credentials.doctor.email;
+            AccountManager.instance.currentAccount.serverAuthToken = response.authToken;
+            OnLoginSuccess();
+        }
+        else
+        {
+            AccountManager.instance.currentAccount.email = "";
+            AccountManager.instance.currentAccount.serverAuthToken= "";
+            OnLoginFail(message);
+        }
+        
     }
     private void OnLoginSuccess()
     {
-        Debug.Log("Login success");
-        // TODO UI
+        PopupController.MakePopup("Zalogowano pomyślnie.", OpenAppView);
     }
     private void OnLoginFail(string message)
     {
-        Debug.Log("Login fail: " + message);
-        // TODO UI
+        PopupController.MakePopup("Błąd logowania: " + message, null);
     }
     public void Register() { StartCoroutine(_Register()); }
     private IEnumerator _Register()
@@ -98,17 +102,21 @@ public class MGApiHandler : MonoBehaviour
         credentials.doctor.password = passwordField.text;
         credentials.doctor.specialty_id = int.Parse(specialtyIdText.text);
 
-        yield return MGApi.Register(credentials, OnRegisterSuccess, OnRegisterFail);
+        WebResponse response = new WebResponse();
 
+        yield return MGApi.Register(credentials, response);
+
+        (string message, bool success) = MGApi.MessageTranslate(response);
+
+        if (success) OnRegisterSuccess();
+        else OnRegisterFail(message);
     }
     private void OnRegisterSuccess()
     {
-        Debug.Log("Register success");
-        // TODO UI
+        PopupController.MakePopup("Rejestracja pomyślna.", null);
     }
     private void OnRegisterFail(string message)
     {
-        Debug.Log("Register fail: " + message);
-        // TODO UI
+        PopupController.MakePopup("Błąd rejestracji:\n" + message, null);
     }
 }

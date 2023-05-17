@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -44,24 +44,10 @@ public class MGApi : MonoBehaviour
     /// <param name="account">Reference account</param>
     /// <param name="onSuccess">Called on Success (HTTP 200) with no arguments</param>
     /// <param name="onFail">Called otherwise with string argument</param>
-    public static IEnumerator Login(MGLogin credentials, MGAccount account, System.Action onSuccess = null, System.Action<string> onFail = null) 
+    public static IEnumerator Login(MGLogin credentials, WebResponse response) 
     {
-        WebResponse response = new WebResponse();
-
         yield return WebRequest.Request("POST", serverURL + "/doctors/sign_in",
             JsonConvert.SerializeObject(credentials), response);
-
-        if (response.code == 200)
-        {
-            account.email = credentials.doctor.email;
-            account.serverAuthToken = response.authToken;
-            if (onSuccess != null) onSuccess.Invoke();
-        } else
-        {
-            account.email = "";
-            account.serverAuthToken = "";
-            if (onFail != null) onFail.Invoke(response.content);
-        }
     }
     /// <summary>
     /// Attempts to register on server.
@@ -70,21 +56,10 @@ public class MGApi : MonoBehaviour
     /// <param name="onSuccess">Called on Success (HTTP 200)</param>
     /// <param name="onFail">Called otherwise with string argument</param>
     /// <returns></returns>
-    public static IEnumerator Register(MGLogin credentials, System.Action onSuccess = null, System.Action<string> onFail = null)
+    public static IEnumerator Register(MGLogin credentials, WebResponse response)
     {
-        WebResponse response = new WebResponse();
-
         yield return WebRequest.Request("POST", serverURL + "/doctors",
             JsonConvert.SerializeObject(credentials), response);
-
-        if (response.code == 200)
-        {
-            if (onSuccess != null) onSuccess.Invoke();
-        }
-        else
-        {
-            if (onFail != null) onFail.Invoke(response.content);
-        }
     }
 
     /// <summary>
@@ -109,5 +84,37 @@ public class MGApi : MonoBehaviour
         }
     }
 
+    public static (string, bool) MessageTranslate(WebResponse response)
+    {
+        // HTTP Errors
+        if (response.code == 404) return ("404 Nie znaleziono strony.", false); // 404 Not Found
+        if (response.code == 401) return ("401 Nie masz dostępu do tej strony.", false); // 401 Unauthorized
+        
+        if (response.code == 200)
+        {
+            try
+            {
+                Dictionary<string,string> payload = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.content);
 
+                if (payload.ContainsKey("message"))
+                {
+                    if (payload["message"] == "Signed up.") return ("", true);
+                    if (payload["message"] == "Sign up failure. Email is invalid") return ("Niepoprawny e-mail.", false);
+                    if (payload["message"] == "Sign up failure. Password is too short (minimum is 6 characters)") return ("Hasło musi mieć długość conajmniej 6 znaków.", false);
+                    if (payload["message"] == "Sign up failure. Email has already been taken") return ("Ten e-mail jest już zajęty.", false);
+                    
+                    if (payload["message"] == "Signed in successfully") return ("", true);
+                    if (payload["message"] == "Invalid Email or password.") return ("Niepoprawny e-mail i/lub hasło.", false);
+                }
+
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning("Deserializing error: " + e.Message);
+                throw;
+            }
+        }
+
+        return ("Unhandled error:\nCode " + response.code + "\nError: " + response.error + "\nContent: " + response.content, false);
+    }
 }
