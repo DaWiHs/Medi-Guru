@@ -133,7 +133,7 @@ public class WebRequest : MonoBehaviour
                 response.authToken = request.GetResponseHeader("Authorization");
             }
         }
-        
+        request.Dispose();
     }
 
 }
