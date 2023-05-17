@@ -16,6 +16,10 @@ public class ScheduleController : MonoBehaviour
     [SerializeField] GameObject linePrefab;
     [SerializeField] GameObject hourPrefab;
 
+    [Header("SideScroll")]
+    [SerializeField] GameObject sideScrollMask;
+    [SerializeField] GameObject sideScrollObj;
+
     [Header("Week Days Objects")]
     [SerializeField] WeekDayObject monday;
     [SerializeField] WeekDayObject tuesday;
@@ -34,6 +38,7 @@ public class ScheduleController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        InitiateWeekObjects();
         InitiateButtons();
 
         tempCalendar.PopulateDay(WeekDay.monday, 8, 10, 15);
@@ -198,6 +203,44 @@ public class ScheduleController : MonoBehaviour
         sunday.applyButton.onClick.AddListener(delegate { GenerateDay(  sunday); });
         sunday.clearButton.onClick.AddListener(delegate { ClearDay(     sunday); });
     }
+    private void InitiateWeekObjects()
+    {
+        monday.applyButton = sideScrollObj.transform.GetChild(0).GetChild(1).GetComponent<Button>();
+        monday.clearButton = sideScrollObj.transform.GetChild(0).GetChild(2).GetComponent<Button>();
+        monday.scrollMask = sideScrollObj.transform.GetChild(0).GetChild(3).gameObject;
+        monday.scrollObj = sideScrollObj.transform.GetChild(0).GetChild(3).GetChild(0).gameObject;
+
+        tuesday.applyButton = sideScrollObj.transform.GetChild(1).GetChild(1).GetComponent<Button>();
+        tuesday.clearButton = sideScrollObj.transform.GetChild(1).GetChild(2).GetComponent<Button>();
+        tuesday.scrollMask = sideScrollObj.transform.GetChild(1).GetChild(3).gameObject;
+        tuesday.scrollObj = sideScrollObj.transform.GetChild(1).GetChild(3).GetChild(0).gameObject;
+
+        wednesday.applyButton = sideScrollObj.transform.GetChild(2).GetChild(1).GetComponent<Button>();
+        wednesday.clearButton = sideScrollObj.transform.GetChild(2).GetChild(2).GetComponent<Button>();
+        wednesday.scrollMask = sideScrollObj.transform.GetChild(2).GetChild(3).gameObject;
+        wednesday.scrollObj = sideScrollObj.transform.GetChild(2).GetChild(3).GetChild(0).gameObject;
+
+        thursday.applyButton = sideScrollObj.transform.GetChild(3).GetChild(1).GetComponent<Button>();
+        thursday.clearButton = sideScrollObj.transform.GetChild(3).GetChild(2).GetComponent<Button>();
+        thursday.scrollMask = sideScrollObj.transform.GetChild(3).GetChild(3).gameObject;
+        thursday.scrollObj = sideScrollObj.transform.GetChild(3).GetChild(3).GetChild(0).gameObject;
+
+        friday.applyButton = sideScrollObj.transform.GetChild(4).GetChild(1).GetComponent<Button>();
+        friday.clearButton = sideScrollObj.transform.GetChild(4).GetChild(2).GetComponent<Button>();
+        friday.scrollMask = sideScrollObj.transform.GetChild(4).GetChild(3).gameObject;
+        friday.scrollObj = sideScrollObj.transform.GetChild(4).GetChild(3).GetChild(0).gameObject;
+
+        saturday.applyButton = sideScrollObj.transform.GetChild(5).GetChild(1).GetComponent<Button>();
+        saturday.clearButton = sideScrollObj.transform.GetChild(5).GetChild(2).GetComponent<Button>();
+        saturday.scrollMask = sideScrollObj.transform.GetChild(5).GetChild(3).gameObject;
+        saturday.scrollObj = sideScrollObj.transform.GetChild(5).GetChild(3).GetChild(0).gameObject;
+
+        sunday.applyButton = sideScrollObj.transform.GetChild(6).GetChild(1).GetComponent<Button>();
+        sunday.clearButton = sideScrollObj.transform.GetChild(6).GetChild(2).GetComponent<Button>();
+        sunday.scrollMask =  sideScrollObj.transform.GetChild(6).GetChild(3).gameObject;
+        sunday.scrollObj =   sideScrollObj.transform.GetChild(6).GetChild(3).GetChild(0).gameObject;
+
+    }
 }
 
 
@@ -303,6 +346,7 @@ public enum WeekDay
 {
     [SerializeField] public Button applyButton;
     [SerializeField] public Button clearButton;
+    [SerializeField] public GameObject scrollMask;
     [SerializeField] public GameObject scrollObj;
     public int maxScroll = 100;
     [SerializeField] public Dictionary<HourMinutePair, GameObject> dayVisits;
