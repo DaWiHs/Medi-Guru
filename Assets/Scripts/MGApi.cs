@@ -62,7 +62,7 @@ public class MGApi : MonoBehaviour
     {
         if (account.serverAuthToken != "")
         {
-            yield return WebRequest.Request("GET", serverURL + "/reviews",
+            yield return WebRequest.Request("GET", serverURL + "/reviews.json",
                 "", response);
         }
         else

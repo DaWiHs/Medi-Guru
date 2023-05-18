@@ -3181,7 +3181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc524cd40f3aa7148942ba00d75d7b58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: https://2098-2a00-f41-7051-66dd-2808-171c-2295-475f.ngrok-free.app
+  url: https://92f7-31-60-110-223.ngrok-free.app/
   email: doctor@mail.com
   password: 123123
   auth: 
@@ -8844,8 +8844,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -10, y: -10}
+  m_AnchoredPosition: {x: 0, y: -7.5}
+  m_SizeDelta: {x: -60, y: -25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &978655489
 MonoBehaviour:

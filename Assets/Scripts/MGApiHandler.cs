@@ -139,7 +139,7 @@ public class MGApiHandler : MonoBehaviour
             reviews.Add(new MGReview("Błąd autoryzacji."));
         } else
         {
-            reviews = JsonConvert.DeserializeObject<List<MGReview>>(response.content);
+            reviews.AddRange(JsonConvert.DeserializeObject<List<MGReview>>(response.content));
         }
 
     }
