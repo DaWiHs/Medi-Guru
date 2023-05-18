@@ -7,6 +7,7 @@ using System.Text;
 [System.Serializable] public class WebResponse
 {
     public long code = 0;
+    public string result = "";
     public string error = "";
     public string content = "";
     public string authToken = "";
@@ -50,13 +51,15 @@ public class WebRequest : MonoBehaviour
     }
     IEnumerator _Login()
     {
-        string requestResult = "";
         WebResponse response = new WebResponse();
-        yield return StartCoroutine(Request("POST", url + "/sign_in",
+        yield return StartCoroutine(Request("POST", url + "/doctors/sign_in",
             "{ \"doctor\": { \"email\": \"" + email +  "\", \"password\":\"" + password + "\" } }",
             response));
-            //result => requestResult = result));
-        Debug.Log("Login ended, result: " + requestResult);
+        //result => requestResult = result));
+
+        MGApi.account.serverAuthToken = response.authToken;
+
+        Debug.Log("Login ended, result: " + response.result);
     }
     public void _DRegister()
     {
@@ -64,12 +67,14 @@ public class WebRequest : MonoBehaviour
     }
     IEnumerator _Register()
     {
-        string requestResult = "";
         WebResponse response = new WebResponse();
-        yield return StartCoroutine(Request("POST", url + "",
-            "{ \"doctor\": { \"email\": \"" + email + "\", \"password\":\"" + password + "\" } }",
+        yield return StartCoroutine(Request("POST", url + "/doctors",
+            "{ \"doctor\": { \"email\": \"" + email + "\", \"password\":\"" + password + "\" , \"specialty_id\" : 1} }",
             response));
-        Debug.Log("Register ended, result: " + requestResult);
+
+        MGApi.account.serverAuthToken = response.authToken;
+        
+        Debug.Log("Register ended, result: " + response.result);
     }
     public void _DLogout()
     {
@@ -86,52 +91,13 @@ public class WebRequest : MonoBehaviour
         Debug.Log("Logout ended, result: " + requestResult);
     }
 
-
     ///////////////////// _Debug
 
-    IEnumerator MyFunction()
-    {
 
-        string requestResult = "";
-        WebResponse response = new WebResponse();
 
-        yield return StartCoroutine(Request("DELETE", url + "/sign_out", "", response));
-        Debug.Log("Delete ended, result: " + requestResult);
 
-        //yield return StartCoroutine(Request("POST", url + "",
-        //    "{ \"doctor\": { \"email\": \"doctor9@mail.com\", \"password\": \"123123\" } }",
-        //    result => requestResult = result));
 
-        //Debug.Log("Func ended, result: " + requestResult);
-        
-    }
-
-    IEnumerator Login()
-    {
-        string requestResult = "";
-        WebResponse response = new WebResponse();
-        yield return StartCoroutine(Request("POST", url + "/sign_in", 
-            "{ \"doctor\": { \"email\": \"doctor6@mail.com\", \"password\":\"123123\" } }", 
-            response));
-
-        AccountManager.instance.currentAccount.serverAuthToken = response.authToken;
-
-        Debug.Log("Login ended, result: " + requestResult);
-        // Login UI
-    }
-
-    IEnumerator Logout()
-    {
-
-        string requestResult = "";
-        WebResponse response = new WebResponse();
-
-        yield return StartCoroutine(Request("DELETE", url + "/sign_out", "", response));
-        Debug.Log("Logout ended, result: " + requestResult);
-        // Logout ui
-    }
-
-    public IEnumerator Request(string method, string url, string bodyJson, WebResponse response)
+    public static IEnumerator Request(string method, string url, string bodyJson, WebResponse response)
     {
         Debug.Log("Sending request:\nMethod: " + method + "\nURL:" + url + "\nDATA:" + bodyJson);
         
@@ -141,13 +107,19 @@ public class WebRequest : MonoBehaviour
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
         
-        if (auth != "") request.SetRequestHeader("Authorization", auth);
-        yield return request.SendWebRequest();
-        //Encoding.UTF8.(request.downloadHandler.data)
+        if (MGApi.account.serverAuthToken != "") 
+            request.SetRequestHeader("Authorization", MGApi.account.serverAuthToken);
 
+        // Wait for server response
+        yield return request.SendWebRequest();
+
+        // Set WebResponse
         response.code = request.responseCode;
+        response.result = request.result.ToString();
         response.error = request.error;
         response.content = request.downloadHandler.text;
+
+        instance.lastResponse = response;
 
         if (request.result != UnityWebRequest.Result.Success)
         {
@@ -161,7 +133,7 @@ public class WebRequest : MonoBehaviour
                 response.authToken = request.GetResponseHeader("Authorization");
             }
         }
-        
+        request.Dispose();
     }
 
 }
