@@ -57,7 +57,7 @@ public class WebRequest : MonoBehaviour
             response));
         //result => requestResult = result));
 
-        AccountManager.instance.currentAccount.serverAuthToken = response.authToken;
+        MGApi.account.serverAuthToken = response.authToken;
 
         Debug.Log("Login ended, result: " + response.result);
     }
@@ -71,8 +71,8 @@ public class WebRequest : MonoBehaviour
         yield return StartCoroutine(Request("POST", url + "/doctors",
             "{ \"doctor\": { \"email\": \"" + email + "\", \"password\":\"" + password + "\" , \"specialty_id\" : 1} }",
             response));
-        
-        AccountManager.instance.currentAccount.serverAuthToken = response.authToken;
+
+        MGApi.account.serverAuthToken = response.authToken;
         
         Debug.Log("Register ended, result: " + response.result);
     }
@@ -107,8 +107,8 @@ public class WebRequest : MonoBehaviour
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
         
-        if (AccountManager.instance.currentAccount.serverAuthToken != "") 
-            request.SetRequestHeader("Authorization", AccountManager.instance.currentAccount.serverAuthToken);
+        if (MGApi.account.serverAuthToken != "") 
+            request.SetRequestHeader("Authorization", MGApi.account.serverAuthToken);
 
         // Wait for server response
         yield return request.SendWebRequest();

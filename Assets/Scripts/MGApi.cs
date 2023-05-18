@@ -35,6 +35,7 @@ public class MGMessage
 public class MGApi : MonoBehaviour
 {
     public static string serverURL = "";
+    public static MGAccount account = new MGAccount();
 
     /// <summary>
     /// Attempts to log in to API using given credentials.

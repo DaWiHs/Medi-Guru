@@ -73,14 +73,14 @@ public class MGApiHandler : MonoBehaviour
 
         if (success)
         {
-            AccountManager.instance.currentAccount.email = credentials.doctor.email;
-            AccountManager.instance.currentAccount.serverAuthToken = response.authToken;
+            MGApi.account.email = credentials.doctor.email;
+            MGApi.account.serverAuthToken = response.authToken;
             OnLoginSuccess();
         }
         else
         {
-            AccountManager.instance.currentAccount.email = "";
-            AccountManager.instance.currentAccount.serverAuthToken= "";
+            MGApi.account.email = "";
+            MGApi.account.serverAuthToken = "";
             OnLoginFail(message);
         }
         
