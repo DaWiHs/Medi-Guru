@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
 
 public class MGApiHandler : MonoBehaviour
 {
@@ -48,15 +49,20 @@ public class MGApiHandler : MonoBehaviour
         MGApi.serverURL = urlInput.text;
         WebRequest.instance.url = urlInput.text;
     }
+
+    //// TEST CONNECTION
     public void TestConnectivity()
     {
         Debug.Log("DBS_Test");
         connectionStatus.sprite = connectionTesting;
-        StartCoroutine(MGApi.TestConnection(delegate { ConnectionOk(); }, delegate { ConnectionError(); }));
+
+        WebResponse response = new WebResponse();
+        StartCoroutine(MGApi.TestConnection(response, delegate { ConnectionOk(); }, delegate { ConnectionError(); }));
     }
     void ConnectionOk() { connectionStatus.sprite = connectionOk; }
     void ConnectionError() { connectionStatus.sprite = connectionError; }
 
+    //// LOGIN
     public void Login() { StartCoroutine(_Login()); }
     private IEnumerator _Login()
     {
@@ -93,6 +99,8 @@ public class MGApiHandler : MonoBehaviour
     {
         PopupController.MakePopup("Błąd logowania: " + message, null);
     }
+
+    //// REGISTER
     public void Register() { StartCoroutine(_Register()); }
     private IEnumerator _Register()
     {
@@ -118,5 +126,21 @@ public class MGApiHandler : MonoBehaviour
     private void OnRegisterFail(string message)
     {
         PopupController.MakePopup("Błąd rejestracji:\n" + message, null);
+    }
+
+    //// REVIEWS
+    public static IEnumerator GetReviews(List<MGReview> reviews)
+    {
+        WebResponse response = new WebResponse();
+        yield return MGApi.GetReviews(response);
+
+        if (response.code == 401)
+        {
+            reviews.Add(new MGReview("Błąd autoryzacji."));
+        } else
+        {
+            reviews = JsonConvert.DeserializeObject<List<MGReview>>(response.content);
+        }
+
     }
 }

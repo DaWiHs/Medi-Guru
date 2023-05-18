@@ -42,9 +42,6 @@ public class MGApi : MonoBehaviour
     /// <para>Account auth token will be null if failed.</para>
     /// </summary>
     /// <param name="creditials">Credentials to serialize into JSON</param>
-    /// <param name="account">Reference account</param>
-    /// <param name="onSuccess">Called on Success (HTTP 200) with no arguments</param>
-    /// <param name="onFail">Called otherwise with string argument</param>
     public static IEnumerator Login(MGLogin credentials, WebResponse response) 
     {
         yield return WebRequest.Request("POST", serverURL + "/doctors/sign_in",
@@ -53,26 +50,34 @@ public class MGApi : MonoBehaviour
     /// <summary>
     /// Attempts to register on server.
     /// </summary>
-    /// <param name="credentials">Credentials</param>
-    /// <param name="onSuccess">Called on Success (HTTP 200)</param>
-    /// <param name="onFail">Called otherwise with string argument</param>
+    /// <param name="credentials">Credentials for register</param>
     /// <returns></returns>
     public static IEnumerator Register(MGLogin credentials, WebResponse response)
     {
         yield return WebRequest.Request("POST", serverURL + "/doctors",
             JsonConvert.SerializeObject(credentials), response);
     }
-
+    ///
+    public static IEnumerator GetReviews(WebResponse response)
+    {
+        if (account.serverAuthToken != "")
+        {
+            yield return WebRequest.Request("GET", serverURL + "/reviews",
+                "", response);
+        }
+        else
+        {
+            response.authToken = "";
+            response.code = 401;
+            yield return null;
+        }
+    }
     /// <summary>
     /// Attempts connection to server.
     /// </summary>
-    /// <param name="onSuccess">Called on connection success (code 200)</param>
-    /// <param name="onFail">Called otherwise</param>
     /// <returns></returns>
-    public static IEnumerator TestConnection(System.Action onSuccess = null, System.Action onFail = null)
+    public static IEnumerator TestConnection(WebResponse response, System.Action onSuccess, System.Action onFail)
     {
-        WebResponse response = new WebResponse();
-
         yield return WebRequest.Request("GET", serverURL + "/doctors", "", response);
 
         if (response.code == 200)
