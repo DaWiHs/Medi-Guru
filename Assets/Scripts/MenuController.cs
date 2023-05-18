@@ -87,14 +87,14 @@ public class MenuController : MonoBehaviour
                 _scheduleParent.SetActive(true);
                 _scheduleButton.GetComponent<Image>().color = _activeButtonColor;
                 _scheduleButton.GetComponentInChildren<Text>().color = _activeTextColor;
-
+                _scheduleScript.OnActivate();
                 break;
 
             case MenuState.profile:
                 _profileParent.SetActive(true);
                 _profileButton.GetComponent<Image>().color = _activeButtonColor;
                 _profileButton.GetComponentInChildren<Text>().color = _activeTextColor;
-
+                _profileScript.OnActivate();
                 break;
 
             case MenuState.visits:
@@ -108,7 +108,7 @@ public class MenuController : MonoBehaviour
                 _reviewsParent.SetActive(true);
                 _reviewsButton.GetComponent<Image>().color = _activeButtonColor;
                 _reviewsButton.GetComponentInChildren<Text>().color = _activeTextColor;
-
+                _reviewsScript.OnActivate();
                 break;
 
         }

@@ -6,13 +6,14 @@ using UnityEngine.EventSystems;
 
 public class ReviewsController : MonoBehaviour
 {
-    public bool Active { get; private set; }
-    public GameObject prefab;
-    public RectTransform parent;
+    [Header("References")]
+    public GameObject reviewPrefab;
+    public RectTransform reviewsParent;
     
+    [Header("Reviews")]
+    [SerializeField] List<MGReview> reviews;
 
-    [SerializeField]public List<review> r;
-
+    [Header("Scroll")]
     [SerializeField] private GameObject scrollCatch;
     private int maxScrollDown;
     [SerializeField] private GraphicRaycaster raycaster;
@@ -24,7 +25,7 @@ public class ReviewsController : MonoBehaviour
     {
         eventSystem = GetComponent<EventSystem>();
 
-        renderReview();
+        
     }
 
     // Update is called once per frame
@@ -49,60 +50,72 @@ public class ReviewsController : MonoBehaviour
                 Debug.Log(r);
                 if (r.gameObject == scrollCatch)
                 {
-                    parent.anchoredPosition -= new Vector2(0, Input.mouseScrollDelta.y * 10);
+                    reviewsParent.anchoredPosition -= new Vector2(0, Input.mouseScrollDelta.y * 10);
                 }
             }
         }
 
 
-        if (parent.anchoredPosition.y > maxScrollDown)
-            parent.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(parent.anchoredPosition.y, maxScrollDown, 0.2f));
-        if (parent.anchoredPosition.y < 0)
-            parent.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(parent.anchoredPosition.y, 0, 0.2f));
+        if (reviewsParent.anchoredPosition.y > maxScrollDown)
+            reviewsParent.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(reviewsParent.anchoredPosition.y, maxScrollDown, 0.2f));
+        if (reviewsParent.anchoredPosition.y < 0)
+            reviewsParent.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(reviewsParent.anchoredPosition.y, 0, 0.2f));
 
     }
-    void renderReview()
+    void ClearReviews()
     {
-        // GET REVIEWS
-        //WebResponse siema = new WebResponse();
+        foreach (Transform child in reviewsParent.GetComponentsInChildren<Transform>())
+        {
+            if (child.gameObject == reviewsParent.gameObject) continue;
+            if (child != null) Destroy(child.gameObject);
+        }
+    }
 
-        //WebRequest.instance.Request("GET", "/reviews", " ", siema);
+    private IEnumerator RenderReviews()
+    {
+        // Clear actual reviews
+        ClearReviews();
+        reviews.Clear();
 
+        // Get reviews from server
+        yield return MGApiHandler.GetReviews(reviews);
 
-        for (int i = 0; i < r.Count; i++) //petla wysiwetla
+        // Render
+        for (int i = 0; i < reviews.Count; i++) 
         {
 
-        GameObject obj = Instantiate(prefab, parent);
+            GameObject obj = Instantiate(reviewPrefab, reviewsParent);
             obj.GetComponent<RectTransform>().anchoredPosition += new Vector2(0, -110 * i);
-            obj.transform.GetChild(0).GetComponent<Text>().text = r[i].nick;
-            obj.transform.GetChild(1).GetComponent<Text>().text = r[i].opinia;
-            obj.transform.GetChild(2).GetComponent<Image>().fillAmount = r[i].ocena*1.0f/10;
-
-
-             
+            obj.transform.GetChild(1).GetComponent<Image>().fillAmount = reviews[i].score * 1.0f / 10;
+            obj.transform.GetChild(2).GetComponent<Text>().text = reviews[i].author;
+            obj.transform.GetChild(3).GetComponent<Text>().text = reviews[i].posted_on;
+            obj.transform.GetChild(4).GetComponent<Text>().text = reviews[i].body;
         }
-        maxScrollDown = r.Count * 110 - 200;
-
+        maxScrollDown = reviews.Count * 110 - 200;
     }
-
 
     public void OnActivate()
     {
-        Active = true;
-        // TODO
+        StartCoroutine(RenderReviews());
     }
     public void OnDeactivate()
     {
-        Active = false;
         // TODO
     }
 }
-[System.Serializable] public class review //klasa przechowujaca informacje o ocenach
+[System.Serializable] public class MGReview
  {
-    public string nick;
-    public string opinia;
-    public int ocena; //1-10 co pol gwiazki
+    public int score; // 1-10
+    public string author;
+    public string posted_on; // "DD.MM.YYYY"
+    public string body;
 
-
-
+    public MGReview() { }
+    public MGReview(string _body)
+    {
+        score = 1;
+        author = "ERROR";
+        posted_on = "00.00.0000";
+        body = _body;
+    }
  }
