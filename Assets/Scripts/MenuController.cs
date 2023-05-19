@@ -25,7 +25,7 @@ public class MenuController : MonoBehaviour
 
     [Header("Visits")]
     [SerializeField] private Button _visitsButton;
-    [SerializeField] private VisitsRenderer _visitsScript;
+    [SerializeField] private AppointmentsController _visitsScript;
     [SerializeField] private GameObject _visitsParent;
 
     [Header("Reviews")]
