@@ -41,6 +41,20 @@ using Newtonsoft.Json;
     public string password;
     public int specialty_id = 1;
 }
+[System.Serializable] public class MGAppointmentsQuery
+{
+    /// <summary>
+    /// DD.MM.YYYY
+    /// </summary>
+    public string on_date; 
+}
+[System.Serializable] public class MGAppointment
+{
+    [SerializeField] public System.DateTime time;
+    public int duration;
+    public string patient_name;
+    public string patient_email;
+}
 [System.Serializable] public class MGMessage
 {
     public string message;
@@ -111,6 +125,22 @@ public class MGApi : MonoBehaviour
             // params: first_name, last_name, description, specialty_id
             yield return WebRequest.Request("PUT", serverURL + "/doctor.json",
                 JsonConvert.SerializeObject(profile), response);
+        }
+        else
+        {
+            response.authToken = "";
+            response.code = 401;
+            yield return null;
+        }
+    }
+
+    public static IEnumerator GetAppointments(WebResponse response, MGAppointmentsQuery query)
+    {
+        if (account.serverAuthToken != "")
+        {
+            // params: first_name, last_name, description, specialty_id
+            yield return WebRequest.Request("GET", serverURL + "/appointments.json",
+                 JsonConvert.SerializeObject(query), response);
         }
         else
         {

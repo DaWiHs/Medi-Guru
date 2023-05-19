@@ -166,6 +166,23 @@ public class MGApiHandler : MonoBehaviour
         }
     }
 
+    //// APPOINTMENTS
+    public static IEnumerator GetAppointments(List<MGAppointment> appointments)
+    {
+        WebResponse response = new WebResponse();
+        MGAppointmentsQuery query = new MGAppointmentsQuery();
+        query.on_date = "17.05.2023";
+
+        yield return MGApi.GetAppointments(response, query);
+
+        Debug.Log(response.content);
+
+        appointments.Clear();
+        appointments.AddRange(JsonConvert.DeserializeObject<List<MGAppointment>>(response.content));
+
+    }
+
+
     //// REVIEWS
     public static IEnumerator GetReviews(List<MGReview> reviews)
     {
