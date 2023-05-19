@@ -128,6 +128,26 @@ public class MGApiHandler : MonoBehaviour
         PopupController.MakePopup("Błąd rejestracji:\n" + message, null);
     }
 
+    //// PROFILE
+    public static IEnumerator GetProfile()
+    {
+        WebResponse response = new WebResponse();
+
+        yield return MGApi.GetProfile(response);
+
+        (string message, bool success) = MGApi.MessageTranslate(response);
+
+        if (success)
+        {
+            ProfileController.instance.tempProfile = JsonConvert.DeserializeObject<MGProfile>(response.content);
+
+        } else
+        {
+            PopupController.MakePopup(message, null);
+            ProfileController.instance.tempProfile.description = "ERROR";
+        }
+    }
+
     //// REVIEWS
     public static IEnumerator GetReviews(List<MGReview> reviews)
     {

@@ -4,15 +4,29 @@ using UnityEngine;
 using UnityEngine.Events;
 using Newtonsoft.Json;
 
-[System.Serializable]
-public class MGAccount
+[System.Serializable] public class MGAccount
 {
-    public int id = 0;
     public string serverAuthToken = "";
     public string email = "";
 }
-
-public class MGLogin
+[System.Serializable] public class MGProfile 
+{
+    public string first_name;
+    public string last_name;
+    public string specialty;
+    public int specialty_id;
+    public string description;
+    public MGProfile() { }
+    public MGProfile(MGProfile baseProfile)
+    {
+        first_name = baseProfile.first_name;
+        last_name = baseProfile.last_name;
+        specialty = baseProfile.specialty;
+        specialty_id = baseProfile.specialty_id;
+        description = baseProfile.description;
+    }
+}
+[System.Serializable] public class MGLogin
 {
     [SerializeField] public MGCredentials doctor;
 
@@ -21,15 +35,19 @@ public class MGLogin
         doctor = new MGCredentials();
     }
 }
-public class MGCredentials
+[System.Serializable] public class MGCredentials
 {
     public string email;
     public string password;
     public int specialty_id = 1;
 }
-public class MGMessage
+[System.Serializable] public class MGMessage
 {
     public string message;
+}
+[System.Serializable] class APISpecialties
+{
+    public string name;
 }
 
 public class MGApi : MonoBehaviour
@@ -72,6 +90,37 @@ public class MGApi : MonoBehaviour
             yield return null;
         }
     }
+    public static IEnumerator GetProfile(WebResponse response)
+    {
+        if (account.serverAuthToken != "")
+        {
+            yield return WebRequest.Request("GET", serverURL + "/doctor.json",
+                "", response);
+        }
+        else
+        {
+            response.authToken = "";
+            response.code = 401;
+            yield return null;
+        }
+    }
+    public static IEnumerator UpdateProfile(WebResponse response, MGProfile profile)
+    {
+        if (account.serverAuthToken != "")
+        {
+            // params: first_name, last_name, description, specialty_id
+            yield return WebRequest.Request("PUT", serverURL + "/doctors.json",
+                JsonConvert.SerializeObject(profile), response);
+        }
+        else
+        {
+            response.authToken = "";
+            response.code = 401;
+            yield return null;
+        }
+    }
+
+
     /// <summary>
     /// Attempts connection to server.
     /// </summary>
@@ -94,7 +143,7 @@ public class MGApi : MonoBehaviour
     {
         // HTTP Errors
         if (response.code == 404) return ("404 Nie znaleziono strony.", false); // 404 Not Found
-        if (response.code == 401) return ("401 Nie masz dostępu do tej strony.", false); // 401 Unauthorized
+        if (response.code == 401) return ("401 Nie masz dostępu do tej strony lub nie jesteś zalogowany.", false); // 401 Unauthorized
         
         if (response.code == 200)
         {
@@ -111,6 +160,11 @@ public class MGApi : MonoBehaviour
                     
                     if (payload["message"] == "Signed in successfully") return ("", true);
                     if (payload["message"] == "Invalid Email or password.") return ("Niepoprawny e-mail i/lub hasło.", false);
+                } 
+                else
+                {
+                    // Code 200, no message so nothing to show to user
+                    return ("", true);
                 }
 
             }

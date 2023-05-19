@@ -2,32 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
 
-[System.Serializable] public class Profile
-{
-    public string name;
-    public string surname;
-    public string prefix;
-    public string speciality;
-    //[SerializeField] public Calendar calendar; // Moved to ScheduleController
-}
 
 public class ProfileController : MonoBehaviour
 {
     public static ProfileController instance;
-    public bool Active { get; private set; }
-
 
     [Header("Profile")]
     [SerializeField] bool unsavedChanges = false;
-    [SerializeField] Profile currentProfile;
-    [SerializeField] Profile tempProfile;
+    [SerializeField] MGProfile currentProfile;
+    [SerializeField] public MGProfile tempProfile;
+    public string json;
 
     [Header("References")]
+    [SerializeField] SpecialitiesController profileSpecialities;
     [SerializeField] Text profileFullName;
     [SerializeField] InputField profileName;
     [SerializeField] InputField profileSurname;
-    [SerializeField] InputField profilePrefix;
+    [SerializeField] InputField profileDescription;
     [SerializeField] Image saveButton;
 
     [Header("Variables")]
@@ -47,38 +40,43 @@ public class ProfileController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         profileName.onValueChanged.AddListener(delegate { UpdateName(); });
         profileSurname.onValueChanged.AddListener(delegate { UpdateName(); });
-        profilePrefix.onValueChanged.AddListener(delegate { UpdateName(); });
+        profileDescription.onValueChanged.AddListener(delegate { UpdateDescription(); });
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!Active) return;
 
         if (unsavedChanges)
         {
-            // Save button blink (?) TODO
             SaveButtonBlink();
         }
     }
 
     public void OnActivate()
     {
-        Active = true;
-        // TODO
+        UpdateProfile();
     }
     public void OnDeactivate()
     {
-        Active = false;
         // TODO
     }
-
-    public void SetSpeciality(string speciality)
+    public void UpdateProfileUI()
     {
-        tempProfile.speciality = speciality;
+        profileName.text = currentProfile.first_name;
+        profileSurname.text = currentProfile.last_name;
+        profileDescription.text = currentProfile.description;
+        profileSpecialities.SelectSpeciality(currentProfile.specialty, currentProfile.specialty_id, false);
+    }
+
+    public void SetSpeciality(string speciality, int id)
+    {
+        tempProfile.specialty = speciality;
+        tempProfile.specialty_id = id;
         unsavedChanges = true;
     }
 
@@ -86,15 +84,20 @@ public class ProfileController : MonoBehaviour
     {
         string fullName = "";
 
-        fullName += profilePrefix.text + " ";
-        tempProfile.prefix = profilePrefix.text;
         fullName += profileName.text + " ";
-        tempProfile.name = profileName.text;
+        tempProfile.first_name = profileName.text;
         fullName += profileSurname.text;
-        tempProfile.surname = profileSurname.text;
+        tempProfile.last_name = profileSurname.text;
 
+        if (fullName == " ") fullName = "Jan Kowalski";
         profileFullName.text = fullName;
 
+        unsavedChanges = true;
+    }
+
+    public void UpdateDescription()
+    {
+        tempProfile.description = profileDescription.text;
         unsavedChanges = true;
     }
 
@@ -124,12 +127,47 @@ public class ProfileController : MonoBehaviour
 
         Debug.Log("Profile:\n" + json);
 
-        currentProfile = JsonUtility.FromJson<Profile>(json);
+        currentProfile = JsonUtility.FromJson<MGProfile>(json);
 
         unsavedChanges = false;
 
         saveButton.color = normalColor;
     }
 
+    public void UpdateProfile()
+    {
+        if (currentProfile.specialty_id == 0)
+        {
+            StartCoroutine(_GetProfile());
+        }
+        else
+        {
+            UpdateProfileUI();
+        }
+    }
+
+    private IEnumerator _GetProfile()
+    {
+        // Wait for specialities to render
+        while (profileSpecialities.rendered == false) { yield return null; }
+
+        // Get profile from server
+        yield return MGApiHandler.GetProfile();
+
+        if (tempProfile.description != "ERROR")
+        {
+            tempProfile.specialty_id = SpecialitiesController.SpecialityId(tempProfile.specialty);
+            currentProfile = new MGProfile(tempProfile);
+        }
+        else
+        {
+            tempProfile.first_name = "";
+            tempProfile.last_name = "";
+            tempProfile.description = "";
+        }
+        
+        UpdateProfileUI();
+
+    }
 
 }
