@@ -97,14 +97,6 @@ public class SpecialitiesController : MonoBehaviour
         int index = 1;
         JsonConvert.DeserializeObject<List<APISpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name, index++); });
 
-        string db = "";
-        foreach (KeyValuePair<string,int> item in specialities)
-        {
-            db += "[" + item.Key + " : " + item.Value + "]\n";
-        }
-        Debug.Log(db);
-
-        yield return null;
     }
 
     public void SelectSpeciality(string speciality, int id, bool triggerUnsaved = true)

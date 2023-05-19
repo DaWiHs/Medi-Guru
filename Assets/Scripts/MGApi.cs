@@ -109,7 +109,7 @@ public class MGApi : MonoBehaviour
         if (account.serverAuthToken != "")
         {
             // params: first_name, last_name, description, specialty_id
-            yield return WebRequest.Request("PUT", serverURL + "/doctors.json",
+            yield return WebRequest.Request("PUT", serverURL + "/doctor.json",
                 JsonConvert.SerializeObject(profile), response);
         }
         else
@@ -160,11 +160,14 @@ public class MGApi : MonoBehaviour
                     
                     if (payload["message"] == "Signed in successfully") return ("", true);
                     if (payload["message"] == "Invalid Email or password.") return ("Niepoprawny e-mail i/lub hasło.", false);
+
+                    if (payload["message"] == "Doctor info updated successfuly") return ("Zaktualizowano dane.", true);
+                    if (payload["message"] == "Error: couldn't update doctor") return ("Błąd aktualizacji danych.", false);
                 } 
                 else
                 {
-                    // Code 200, no message so nothing to show to user
-                    return ("", true);
+                    // Code 200, no message
+                    return ("Operacja zakończona sukcesem.", true);
                 }
 
             }

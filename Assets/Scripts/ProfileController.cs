@@ -13,7 +13,6 @@ public class ProfileController : MonoBehaviour
     [SerializeField] bool unsavedChanges = false;
     [SerializeField] MGProfile currentProfile;
     [SerializeField] public MGProfile tempProfile;
-    public string json;
 
     [Header("References")]
     [SerializeField] SpecialitiesController profileSpecialities;
@@ -121,13 +120,9 @@ public class ProfileController : MonoBehaviour
     }
     private IEnumerator _SaveChanges()
     {
-        yield return null;
+        yield return MGApiHandler.SaveProfile(tempProfile);
 
-        string json = JsonUtility.ToJson(tempProfile);
-
-        Debug.Log("Profile:\n" + json);
-
-        currentProfile = JsonUtility.FromJson<MGProfile>(json);
+        currentProfile = new MGProfile(tempProfile);
 
         unsavedChanges = false;
 

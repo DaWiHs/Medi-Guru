@@ -147,6 +147,24 @@ public class MGApiHandler : MonoBehaviour
             ProfileController.instance.tempProfile.description = "ERROR";
         }
     }
+    public static IEnumerator SaveProfile(MGProfile profile)
+    {
+        WebResponse response = new WebResponse();
+
+        yield return MGApi.UpdateProfile(response, profile);
+
+        (string message, bool success) = MGApi.MessageTranslate(response);
+
+        if (success)
+        {
+            PopupController.MakePopup(message, null);
+        }
+        else
+        {
+            PopupController.MakePopup(message, null);
+            ProfileController.instance.tempProfile.description = "ERROR";
+        }
+    }
 
     //// REVIEWS
     public static IEnumerator GetReviews(List<MGReview> reviews)

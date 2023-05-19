@@ -6162,7 +6162,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &655599033
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9537,7 +9537,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1093843717
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17334,11 +17334,6 @@ MonoBehaviour:
     specialty: 
     specialty_id: 0
     description: 
-  json: '{"first_name":"Lester","last_name":"Considine","specialty":"fizjoterapeuta","description":"Officia
-    molestiae quod. Est consectetur ut. Aperiam animi et. Aliquam id reiciendis.
-    Qui dolor qui. Deserunt est consequatur. Qui et dolor. Aut cum aliquam. Delectus
-    rerum non. Consequatur cumque et. Perspiciatis eum eos. Et sed aperiam. Velit
-    recusandae iure. Magnam facilis eos. Quia est quis."}'
   profileSpecialities: {fileID: 1992117313}
   profileFullName: {fileID: 1940769844}
   profileName: {fileID: 1296346102}
