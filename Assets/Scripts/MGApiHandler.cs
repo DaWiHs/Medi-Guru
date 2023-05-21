@@ -128,6 +128,69 @@ public class MGApiHandler : MonoBehaviour
         PopupController.MakePopup("Błąd rejestracji:\n" + message, null);
     }
 
+    //// SCHEDULE
+    public static IEnumerator GetSchedule()
+    {
+        WebResponse response = new WebResponse();
+
+        yield return MGApi.GetSchedule(response);
+
+        // Deserializing <string, array> throws error when attempting <string, string>
+        (string message, bool success) = MGApi.MessageTranslate(response, false);
+
+        Debug.Log("GetSchedule: " + response.content);
+        if (success)
+        {
+            // Wrapper for API compatibility
+            // { schedule: { monday : [], tuesday : [], ... } }
+            MGDoctorSchedule docSchedule = new MGDoctorSchedule();
+            docSchedule.schedule = new MGSchedule();
+
+
+            // Read response
+            docSchedule = JsonConvert.DeserializeObject<MGDoctorSchedule>(response.content);
+
+            string serial = JsonConvert.SerializeObject(docSchedule.schedule);
+
+            // Copy (no reference) from docSchedule.schedule to out schedule
+            ScheduleController.instance.currentCalendar = JsonConvert.DeserializeObject<MGSchedule>(serial);
+            ScheduleController.instance.tempCalendar = JsonConvert.DeserializeObject<MGSchedule>(serial);
+        }
+        else
+        {
+            PopupController.MakePopup(message, null);
+        }
+
+        
+
+    }
+    public static IEnumerator SetSchedule(MGSchedule schedule)
+    {
+        WebResponse response = new WebResponse();
+
+        // Wrapper for API compatibility
+        // { schedule: { monday : [], tuesday : [], ... } }
+        MGDoctorSchedule docSchedule = new MGDoctorSchedule();
+        docSchedule.schedule = schedule;
+
+        yield return MGApi.SetSchedule(response, docSchedule);
+
+        (string message, bool success) = MGApi.MessageTranslate(response);
+
+        Debug.Log("SetSchedule: " + response.content);
+        if (success)
+        {
+            PopupController.MakePopup(message, null);
+        }
+        else
+        {
+            PopupController.MakePopup(message, null);
+        }
+
+
+
+    }
+
     //// PROFILE
     public static IEnumerator GetProfile()
     {
