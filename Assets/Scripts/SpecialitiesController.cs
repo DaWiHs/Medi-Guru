@@ -4,10 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 
-class APISpecialties
-{
-    public string name;
-}
+
 
 public class SpecialitiesController : MonoBehaviour
 {
@@ -21,9 +18,8 @@ public class SpecialitiesController : MonoBehaviour
     [SerializeField] Dictionary<string, GameObject> searchValues = new Dictionary<string, GameObject>();
 
     [Header("Variables")]
-    public Dictionary<string, int> specialities = new Dictionary<string, int>();
-    //public Color toggleDisabled;
-    //public Color toggleEnabled;
+    public static Dictionary<string, int> specialities = new Dictionary<string, int>();
+    public bool rendered = false;
 
     void Start()
     {
@@ -51,36 +47,41 @@ public class SpecialitiesController : MonoBehaviour
     public void RenderSpecialities() { StartCoroutine(_RenderSpecialities()); }
     private IEnumerator _RenderSpecialities()
     {
-        // Get specialities if none
-        if (specialities.Count < 1) yield return StartCoroutine(GetSpecialities());
-
-        // Render
-        int currentY = 0;
-        foreach (string speciality in specialities.Keys)
+        if (!rendered)
         {
-            // Generate
-            GameObject obj = Instantiate(specialityPrefab, specialitiesParent);
-            RectTransform t = obj.GetComponent<RectTransform>();
+            // Get specialities if none
+            if (specialities.Count < 1) yield return StartCoroutine(GetSpecialities());
 
-            searchValues.Add(speciality, obj);
+            // Render
+            int currentY = 0;
+            foreach (string speciality in specialities.Keys)
+            {
+                // Generate
+                GameObject obj = Instantiate(specialityPrefab, specialitiesParent);
+                RectTransform t = obj.GetComponent<RectTransform>();
 
-            // Place
-            t.anchoredPosition = new Vector2Int(0, currentY);
+                searchValues.Add(speciality, obj);
 
-            // Obj update
-            obj.name = "Speciality_" + speciality;
-            obj.GetComponentInChildren<Text>().text = speciality;
-            string _s = speciality;                             // Copy for delegate
-            int _i = specialities[speciality];                             // Copy for delegate
-            Button _b = obj.GetComponentInChildren<Button>();   // Copy for delegate
+                // Place
+                t.anchoredPosition = new Vector2Int(0, currentY);
 
-            _b.onClick.AddListener(delegate { SelectSpeciality(_s, _i, _b); });
+                // Obj update
+                obj.name = "Speciality_" + speciality;
+                obj.GetComponentInChildren<Text>().text = speciality;
+                string _s = speciality;                             // Copy for delegate
+                int _i = specialities[speciality];                  // Copy for delegate
+                Button _b = obj.GetComponentInChildren<Button>();   // Copy for delegate
+
+                _b.onClick.AddListener(delegate { SelectSpeciality(_s, _i); });
 
 
-            // Render options update
-            currentY -= 20 + 1;
+                // Render options update
+                currentY -= 20 + 1;
 
+            }
+            rendered = true;
         }
+        yield return null;
     }
 
     public IEnumerator GetSpecialities()
@@ -92,22 +93,20 @@ public class SpecialitiesController : MonoBehaviour
             WebRequest.instance.url + "/specialties.json",
             "",
             response));
-        int index = 1;
-        JsonConvert.DeserializeObject<List<APISpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name, index++); });
 
-        //specialities.AddRange(JsonUtility.FromJson<APISpecialty>(response.content));
-        //specialities.Sort();
-        yield return null;
+        int index = 1;
+        JsonConvert.DeserializeObject<List<MGSpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name, index++); });
+
     }
 
-    public void SelectSpeciality(string speciality, int id, Button reference)
+    public void SelectSpeciality(string speciality, int id, bool triggerUnsaved = true)
     {
         // Speciality searchbox update
         specialitySearchInput.text = speciality;
         specialitySelectedId.text = id + "";
 
         // Profile update
-        if (ProfileController.instance != null) ProfileController.instance.SetSpeciality(speciality);
+        if (ProfileController.instance != null && triggerUnsaved) ProfileController.instance.SetSpeciality(speciality, id);
 
         // Remove focus
         //mySearchInput.interactable = false;
@@ -154,6 +153,21 @@ public class SpecialitiesController : MonoBehaviour
     private void HideDropdown()
     {
         dropdown.SetActive(false);
+    }
+
+    public static int SpecialityId(string specialty)
+    {
+        Debug.Log("Id of " + specialty);
+        if (specialities.ContainsKey(specialty)) return specialities[specialty];
+        return 0;
+    }
+    public static string SpecialityName(int id)
+    {
+        foreach (KeyValuePair<string, int> item in specialities)
+        {
+            if (item.Value == id) return item.Key;
+        }
+        return "";
     }
 
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
-
-public class VisitsRenderer : MonoBehaviour
+public class AppointmentsController : MonoBehaviour
 {
     public bool Active { get; private set; }
 
@@ -19,8 +19,14 @@ public class VisitsRenderer : MonoBehaviour
     [SerializeField] private GameObject previewObject;
     [SerializeField] private GameObject connectImage;
     [SerializeField] private List<VisitObject> visitObjects = new List<VisitObject>();
+
+    [Header("PreviewReferences")]
+    [SerializeField] Text previewHour;
+    [SerializeField] Text previewName;
+    [SerializeField] Text previewDescription;
     
     [Header("GenValues")]
+    public List<MGAppointment> appointments;
     public int minutesPerVisit = 15;
 
     public int startWorkHour;
@@ -51,6 +57,7 @@ public class VisitsRenderer : MonoBehaviour
     {
         Active = true;
         RenderVisits();
+        StartCoroutine(_GetAppointments());
         // TODO
     }
     public void OnDeactivate()
@@ -93,59 +100,53 @@ public class VisitsRenderer : MonoBehaviour
     public void RenderVisits()
     {
         int currentY = 0;
-        int currentMinutes = 60;
-        int currentHour = startWorkHour - 1;
+        int currentHour = 0;
+        int lastHour = 0;
 
-        int visits = (endWorkHour - startWorkHour) * 60 / minutesPerVisit;
-
-        for (int i = 0; i <= visits; i++)
+        int i = 0;
+        foreach (MGAppointment item in appointments)
         {
-            if (currentMinutes >= 60)
+            // Render line and hour
+            currentHour = item.time.Hour;
+            if (currentHour != lastHour)
             {
-                currentMinutes -= 60;
-                currentHour++;
+                lastHour = currentHour;
                 GameObject l = Instantiate(linePrefab, todayView);
                 l.GetComponent<RectTransform>().anchoredPosition = new Vector2Int(0, currentY);
 
                 GameObject h = Instantiate(hourPrefab, todayView);
                 h.GetComponent<RectTransform>().anchoredPosition = new Vector2Int(0, currentY);
                 h.GetComponentInChildren<Text>().text = currentHour + ":00";
-
             }
 
-            if (i == visits)
-            {
-                maxScrollDown = (currentY * -1) - 200;
-                break;
-            }
-            // Create visit plate
-            // Set visit time text
+            // Render visit obj
             GameObject v = Instantiate(visitPrefab, todayView);
             v.GetComponent<RectTransform>().anchoredPosition = new Vector2Int(0, currentY);
-            v.GetComponentInChildren<Text>().text = VisitTimeText(currentHour * 60 + currentMinutes);
+            v.GetComponentInChildren<Text>().text = VisitTimeText(item.time.Hour * 60 + item.time.Minute, item.duration / 60);
 
             visitObjects.Add(new VisitObject(
                 i,
-                currentHour * 60 + currentMinutes, 
-                minutesPerVisit, 
+                item.time.Hour * 60 + item.time.Minute,
+                minutesPerVisit,
                 v
                 ));
 
-            v.name = "Visit_" + currentHour + "_" + currentMinutes;
+            v.name = "Visit_" + item.time.Hour + "_" + item.time.Minute;
 
             // Delegate function
-            int _i = i;
+            int _i = i++;
             v.GetComponentInChildren<Button>().onClick.AddListener(delegate { ButtonDelegated(_i); });
 
-
-            // Increase timer and placement
-            currentMinutes += minutesPerVisit;
+            // Placement
             currentY -= 15;
         }
+
+        maxScrollDown = (currentY * -1) - 200;
     }
 
     public void RemoveRender()
     {
+        connectImage.transform.SetParent(previewObject.transform);
         foreach(Transform child in todayView.GetComponentsInChildren<Transform>())
         {
             if (child.gameObject == todayView.gameObject) continue;
@@ -164,18 +165,24 @@ public class VisitsRenderer : MonoBehaviour
         previewObject.SetActive(true);
         connectImage.SetActive(true);
         connectImage.transform.SetParent(visitObjects[index].objectReference.transform);
-        connectImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(125f, -0.5f);
+        connectImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(100f, -0.5f);
+
+        MGAppointment a = appointments[index];
+
+        previewHour.text = VisitTimeText(a.time.Hour * 60 + a.time.Minute, a.duration / 60);
+        previewName.text = a.patient_name;
+
     }
 
-    private string VisitTimeText(int currentTime)
+    private string VisitTimeText(int currentTime, int duration)
     {
         string ret = "";
 
         int hS = currentTime / 60;
-        int hE = (currentTime + minutesPerVisit) / 60;
+        int hE = (currentTime + duration) / 60;
 
         int mS = currentTime - (hS * 60);
-        int mE = currentTime + minutesPerVisit - (hE * 60);
+        int mE = currentTime + duration - (hE * 60);
 
         ret += hS + ":";
         if (mS < 10) ret += "0" + mS;
@@ -189,5 +196,13 @@ public class VisitsRenderer : MonoBehaviour
 
         return ret;
     } 
+
+    private IEnumerator _GetAppointments()
+    {
+        yield return MGApiHandler.GetAppointments(appointments);
+        appointments.ForEach((t) => { Debug.Log("Appointment: " + t.time + " " + (t.duration / 60f) + " " + t.patient_name); });
+        RemoveRender();
+        RenderVisits();
+    }
 
 }

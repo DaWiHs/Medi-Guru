@@ -128,6 +128,124 @@ public class MGApiHandler : MonoBehaviour
         PopupController.MakePopup("Błąd rejestracji:\n" + message, null);
     }
 
+    //// SCHEDULE
+    public static IEnumerator GetSchedule()
+    {
+        WebResponse response = new WebResponse();
+
+        yield return MGApi.GetSchedule(response);
+
+        // Deserializing <string, array> throws error when attempting <string, string>
+        (string message, bool success) = MGApi.MessageTranslate(response, false);
+
+        Debug.Log("GetSchedule: " + response.content);
+        if (success)
+        {
+            // Wrapper for API compatibility
+            // { schedule: { monday : [], tuesday : [], ... } }
+            MGDoctorSchedule docSchedule = new MGDoctorSchedule();
+            docSchedule.schedule = new MGSchedule();
+
+
+            // Read response
+            docSchedule = JsonConvert.DeserializeObject<MGDoctorSchedule>(response.content);
+
+            string serial = JsonConvert.SerializeObject(docSchedule.schedule);
+
+            // Copy (no reference) from docSchedule.schedule to out schedule
+            ScheduleController.instance.currentCalendar = JsonConvert.DeserializeObject<MGSchedule>(serial);
+            ScheduleController.instance.tempCalendar = JsonConvert.DeserializeObject<MGSchedule>(serial);
+        }
+        else
+        {
+            PopupController.MakePopup(message, null);
+        }
+
+        
+
+    }
+    public static IEnumerator SetSchedule(MGSchedule schedule)
+    {
+        WebResponse response = new WebResponse();
+
+        // Wrapper for API compatibility
+        // { schedule: { monday : [], tuesday : [], ... } }
+        MGDoctorSchedule docSchedule = new MGDoctorSchedule();
+        docSchedule.schedule = schedule;
+
+        yield return MGApi.SetSchedule(response, docSchedule);
+
+        (string message, bool success) = MGApi.MessageTranslate(response);
+
+        Debug.Log("SetSchedule: " + response.content);
+        if (success)
+        {
+            PopupController.MakePopup(message, null);
+        }
+        else
+        {
+            PopupController.MakePopup(message, null);
+        }
+
+
+
+    }
+
+    //// PROFILE
+    public static IEnumerator GetProfile()
+    {
+        WebResponse response = new WebResponse();
+
+        yield return MGApi.GetProfile(response);
+
+        (string message, bool success) = MGApi.MessageTranslate(response);
+
+        if (success)
+        {
+            ProfileController.instance.tempProfile = JsonConvert.DeserializeObject<MGProfile>(response.content);
+
+        } else
+        {
+            PopupController.MakePopup(message, null);
+            ProfileController.instance.tempProfile.description = "ERROR";
+        }
+    }
+    public static IEnumerator SaveProfile(MGProfile profile)
+    {
+        WebResponse response = new WebResponse();
+
+        yield return MGApi.UpdateProfile(response, profile);
+
+        (string message, bool success) = MGApi.MessageTranslate(response);
+
+        if (success)
+        {
+            PopupController.MakePopup(message, null);
+        }
+        else
+        {
+            PopupController.MakePopup(message, null);
+            ProfileController.instance.tempProfile.description = "ERROR";
+        }
+    }
+
+    //// APPOINTMENTS
+    public static IEnumerator GetAppointments(List<MGAppointment> appointments)
+    {
+        WebResponse response = new WebResponse();
+        MGAppointmentsQuery query = new MGAppointmentsQuery();
+        query.on_date = "17.05.2023";
+
+        yield return MGApi.GetAppointments(response, query);
+
+        Debug.Log(response.content);
+
+        appointments.Clear();
+        appointments.AddRange(JsonConvert.DeserializeObject<List<MGAppointment>>(response.content));
+
+    }
+
+
     //// REVIEWS
     public static IEnumerator GetReviews(List<MGReview> reviews)
     {
@@ -139,7 +257,7 @@ public class MGApiHandler : MonoBehaviour
             reviews.Add(new MGReview("Błąd autoryzacji."));
         } else
         {
-            reviews = JsonConvert.DeserializeObject<List<MGReview>>(response.content);
+            reviews.AddRange(JsonConvert.DeserializeObject<List<MGReview>>(response.content));
         }
 
     }
