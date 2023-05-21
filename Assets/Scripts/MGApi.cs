@@ -3,7 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Newtonsoft.Json;
-
+public enum WeekDay
+{
+    monday      ,
+    tuesday     ,
+    wednesday   ,
+    thursday    ,
+    friday      ,
+    saturday    ,
+    sunday
+}
 [System.Serializable] public class MGAccount
 {
     public string serverAuthToken = "";
@@ -59,9 +68,111 @@ using Newtonsoft.Json;
 {
     public string message;
 }
-[System.Serializable] class APISpecialties
+[System.Serializable] public class MGSpecialties
 {
     public string name;
+}
+[System.Serializable] public class MGHourMinuteDuration
+{
+    public MGHourMinuteDuration() { }
+    public MGHourMinuteDuration(int _h, int _m, int _d) { hour = _h; minute = _m; duration = _d; }
+    [SerializeField] public int hour;
+    [SerializeField] public int minute;
+    [SerializeField] public int duration;
+};
+[System.Serializable] public class MGDoctorSchedule
+{
+    public MGSchedule schedule;
+}
+[System.Serializable] public class MGSchedule
+{
+    [SerializeField] public List<MGHourMinuteDuration> monday   = new List<MGHourMinuteDuration>();
+    [SerializeField] public List<MGHourMinuteDuration> tuesday  = new List<MGHourMinuteDuration>();
+    [SerializeField] public List<MGHourMinuteDuration> wednesday= new List<MGHourMinuteDuration>();
+    [SerializeField] public List<MGHourMinuteDuration> thursday = new List<MGHourMinuteDuration>();
+    [SerializeField] public List<MGHourMinuteDuration> friday   = new List<MGHourMinuteDuration>();
+    [SerializeField] public List<MGHourMinuteDuration> saturday = new List<MGHourMinuteDuration>();
+    [SerializeField] public List<MGHourMinuteDuration> sunday   = new List<MGHourMinuteDuration>();
+
+    public void PopulateDay(WeekDay day, int startHour, int endHour, int jump)
+    {
+        int m = 0;
+        for (int h = startHour; h < endHour;)
+        {
+            DayAdd(day, h, m, jump);
+
+            m += jump;
+            if (m >= 60)
+            {
+                m -= 60;
+                h++;
+            }
+        }
+    }
+    public void DayAdd(WeekDay day, int hour, int min, int duration)
+    {
+        switch (day)
+        {
+            case WeekDay.monday:
+                monday.Add(new MGHourMinuteDuration(hour, min, duration));
+                break;
+            case WeekDay.tuesday:
+                tuesday.Add(new MGHourMinuteDuration(hour, min, duration));
+                break;
+            case WeekDay.wednesday:
+                wednesday.Add(new MGHourMinuteDuration(hour, min, duration));
+                break;
+            case WeekDay.thursday:
+                thursday.Add(new MGHourMinuteDuration(hour, min, duration));
+                break;
+            case WeekDay.friday:
+                friday.Add(new MGHourMinuteDuration(hour, min, duration));
+                break;
+            case WeekDay.saturday:
+                saturday.Add(new MGHourMinuteDuration(hour, min, duration));
+                break;
+            case WeekDay.sunday:
+                sunday.Add(new MGHourMinuteDuration(hour, min, duration));
+                break;
+        }
+    }
+    public void ClearDay(WeekDay day)
+    {
+        switch (day)
+        {
+            case WeekDay.monday:
+                monday.Clear();
+                break;
+            case WeekDay.tuesday:
+                tuesday.Clear();
+                break;
+            case WeekDay.wednesday:
+                wednesday.Clear();
+                break;
+            case WeekDay.thursday:
+                thursday.Clear();
+                break;
+            case WeekDay.friday:
+                friday.Clear();
+                break;
+            case WeekDay.saturday:
+                saturday.Clear();
+                break;
+            case WeekDay.sunday:
+                sunday.Clear();
+                break;
+        }
+    }
+    public void ClearSchedule()
+    {
+        monday.Clear();
+        tuesday.Clear();
+        wednesday.Clear();
+        thursday.Clear();
+        friday.Clear();
+        saturday.Clear();
+        sunday.Clear();
+    }
 }
 
 public class MGApi : MonoBehaviour
@@ -150,6 +261,37 @@ public class MGApi : MonoBehaviour
         }
     }
 
+    public static IEnumerator GetSchedule(WebResponse response)
+    {
+        if (account.serverAuthToken != "")
+        {
+            yield return WebRequest.Request("GET", serverURL + "/schedule.json",
+                 "", response);
+        }
+        else
+        {
+            response.authToken = "";
+            response.code = 401;
+            yield return null;
+        }
+    }
+    public static IEnumerator SetSchedule(WebResponse response, MGDoctorSchedule doctorSchedule)
+    {
+        Debug.Log(JsonConvert.SerializeObject(doctorSchedule));
+        if (account.serverAuthToken != "")
+        {
+            yield return WebRequest.Request("PUT", serverURL + "/schedule.json",
+                 JsonConvert.SerializeObject(doctorSchedule), response);
+        }
+        else
+        {
+            response.authToken = "";
+            response.code = 401;
+            yield return null;
+        }
+    }
+
+
 
     /// <summary>
     /// Attempts connection to server.
@@ -169,7 +311,7 @@ public class MGApi : MonoBehaviour
         }
     }
 
-    public static (string, bool) MessageTranslate(WebResponse response)
+    public static (string, bool) MessageTranslate(WebResponse response, bool throwException = true)
     {
         // HTTP Errors
         if (response.code == 404) return ("404 Nie znaleziono strony.", false); // 404 Not Found
@@ -193,6 +335,9 @@ public class MGApi : MonoBehaviour
 
                     if (payload["message"] == "Doctor info updated successfuly") return ("Zaktualizowano dane.", true);
                     if (payload["message"] == "Error: couldn't update doctor") return ("Błąd aktualizacji danych.", false);
+
+                    if (payload["message"] == "Schedule updated successfuly") return ("Zaktualizowano dane.", true);
+                    
                 } 
                 else
                 {
@@ -204,7 +349,9 @@ public class MGApi : MonoBehaviour
             catch (System.Exception e)
             {
                 Debug.LogWarning("Deserializing error: " + e.Message);
-                throw;
+                // In case it translates Schedule, which is <string, array> don't throw error
+                if (throwException) throw;
+                else return ("Operacja zakończona sukcesem.", true);
             }
         }
 

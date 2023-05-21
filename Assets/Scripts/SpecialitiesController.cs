@@ -95,7 +95,7 @@ public class SpecialitiesController : MonoBehaviour
             response));
 
         int index = 1;
-        JsonConvert.DeserializeObject<List<APISpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name, index++); });
+        JsonConvert.DeserializeObject<List<MGSpecialties>>(response.content).ForEach((t) => { specialities.Add(t.name, index++); });
 
     }
 
