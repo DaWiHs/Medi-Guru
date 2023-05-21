@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
+using UnityEngine.EventSystems;
 
 public class ScheduleController : MonoBehaviour
 {
@@ -18,10 +19,6 @@ public class ScheduleController : MonoBehaviour
     [SerializeField] GameObject linePrefab;
     [SerializeField] GameObject hourPrefab;
 
-    [Header("SideScroll")]
-    [SerializeField] GameObject sideScrollMask;
-    [SerializeField] GameObject sideScrollObj;
-
     [Header("Week Days Objects")]
     [SerializeField] WeekDayObject monday;
     [SerializeField] WeekDayObject tuesday;
@@ -36,6 +33,14 @@ public class ScheduleController : MonoBehaviour
     [SerializeField] public MGSchedule currentCalendar;
     [SerializeField] public MGSchedule tempCalendar;
 
+    [Header("SideScroll")]
+    private List<WeekDayObject> days;
+    [SerializeField] GameObject sideScrollMask;
+    [SerializeField] RectTransform sideScrollObj;
+    public int maxSideScroll;
+    [SerializeField] private GraphicRaycaster raycaster;
+    private EventSystem eventSystem;
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -48,7 +53,7 @@ public class ScheduleController : MonoBehaviour
 
         InitiateWeekObjects();
         InitiateButtons();
-
+        days = new List<WeekDayObject> { monday, tuesday, wednesday, thursday, friday, saturday, sunday };
         currentCalendar = new MGSchedule();
         tempCalendar = new MGSchedule();
 
@@ -57,8 +62,57 @@ public class ScheduleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+        MultiScrollControl();
     }
+
+    private void MultiScrollControl()
+    {
+
+
+        if (Input.mouseScrollDelta.y != 0)
+        {
+            // Setup PointerEvent in place
+            PointerEventData pointerEvent = new PointerEventData(eventSystem);
+            pointerEvent.position = Input.mousePosition;
+
+            // Raycast using PointerEvent
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            raycaster.Raycast(pointerEvent, raycastResults);
+
+            foreach (RaycastResult r in raycastResults)
+            {
+                foreach (WeekDayObject day in days)
+                {
+                    if (r.gameObject == day.scrollMask)
+                    {
+                        day.scrollObj.anchoredPosition -= new Vector2(0, Input.mouseScrollDelta.y * 10);
+                    }
+                }
+                //if (!noMore && r.gameObject == sideScrollMask) 
+                //{
+                //    sideScrollObj.anchoredPosition -= new Vector2(Input.mouseScrollDelta.y * 10, 0);
+                //}
+            }
+            
+        }
+
+        foreach (WeekDayObject day in days)
+        {
+            if (day.scrollObj.anchoredPosition.y > day.maxScroll)
+                day.scrollObj.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(day.scrollObj.anchoredPosition.y, day.maxScroll, 0.2f));
+            if (day.scrollObj.anchoredPosition.y < 0)
+                day.scrollObj.anchoredPosition = new Vector2(0, Mathf.LerpUnclamped(day.scrollObj.anchoredPosition.y, 0, 0.2f));
+        }
+
+        //if (sideScrollObj.anchoredPosition.x > 0)
+        //    sideScrollObj.anchoredPosition = new Vector2(Mathf.LerpUnclamped(sideScrollObj.anchoredPosition.x, 0, 0.2f), 0);
+        //if (sideScrollObj.anchoredPosition.x < maxSideScroll)
+        //    sideScrollObj.anchoredPosition = new Vector2(Mathf.LerpUnclamped(sideScrollObj.anchoredPosition.x, maxSideScroll, 0.2f), 0);
+
+
+    }
+
     public void OnActivate()
     {
         Active = true;
@@ -71,10 +125,7 @@ public class ScheduleController : MonoBehaviour
         // TODO
     }
 
-    public void RenderDays()
-    {
-        StartCoroutine(_RenderDays());
-    }
+    public void RenderDays() { StartCoroutine(_RenderDays()); }
     IEnumerator _RenderDays()
     {
 
@@ -124,7 +175,7 @@ public class ScheduleController : MonoBehaviour
             currentY -= 15;
         }
 
-        obj.maxScroll = (currentY * -1) - 200;
+        obj.maxScroll = Mathf.Max(currentY * -1 - 100, 0);
     }
 
     public void UpdateSchedule()
@@ -178,7 +229,7 @@ public class ScheduleController : MonoBehaviour
             // Stop if all done
             if (i == visits)
             {
-                day.maxScroll = (currentY * -1) - 200;
+                day.maxScroll = Mathf.Max(currentY * -1 - 100, 0);
                 break;
             }
 
@@ -272,43 +323,43 @@ public class ScheduleController : MonoBehaviour
         monday.applyButton = sideScrollObj.transform.GetChild(0).GetChild(1).GetComponent<Button>();
         monday.clearButton = sideScrollObj.transform.GetChild(0).GetChild(2).GetComponent<Button>();
         monday.scrollMask = sideScrollObj.transform.GetChild(0).GetChild(3).gameObject;
-        monday.scrollObj = sideScrollObj.transform.GetChild(0).GetChild(3).GetChild(0).gameObject;
+        monday.scrollObj = sideScrollObj.transform.GetChild(0).GetChild(3).GetChild(0).GetComponent<RectTransform>();
 
         tuesday.weekDay = WeekDay.tuesday;
         tuesday.applyButton = sideScrollObj.transform.GetChild(1).GetChild(1).GetComponent<Button>();
         tuesday.clearButton = sideScrollObj.transform.GetChild(1).GetChild(2).GetComponent<Button>();
         tuesday.scrollMask = sideScrollObj.transform.GetChild(1).GetChild(3).gameObject;
-        tuesday.scrollObj = sideScrollObj.transform.GetChild(1).GetChild(3).GetChild(0).gameObject;
+        tuesday.scrollObj = sideScrollObj.transform.GetChild(1).GetChild(3).GetChild(0).GetComponent<RectTransform>();
 
         wednesday.weekDay = WeekDay.wednesday;
         wednesday.applyButton = sideScrollObj.transform.GetChild(2).GetChild(1).GetComponent<Button>();
         wednesday.clearButton = sideScrollObj.transform.GetChild(2).GetChild(2).GetComponent<Button>();
         wednesday.scrollMask = sideScrollObj.transform.GetChild(2).GetChild(3).gameObject;
-        wednesday.scrollObj = sideScrollObj.transform.GetChild(2).GetChild(3).GetChild(0).gameObject;
+        wednesday.scrollObj = sideScrollObj.transform.GetChild(2).GetChild(3).GetChild(0).GetComponent<RectTransform>();
 
         thursday.weekDay = WeekDay.thursday;
         thursday.applyButton = sideScrollObj.transform.GetChild(3).GetChild(1).GetComponent<Button>();
         thursday.clearButton = sideScrollObj.transform.GetChild(3).GetChild(2).GetComponent<Button>();
         thursday.scrollMask = sideScrollObj.transform.GetChild(3).GetChild(3).gameObject;
-        thursday.scrollObj = sideScrollObj.transform.GetChild(3).GetChild(3).GetChild(0).gameObject;
+        thursday.scrollObj = sideScrollObj.transform.GetChild(3).GetChild(3).GetChild(0).GetComponent<RectTransform>();
 
         friday.weekDay = WeekDay.friday;
         friday.applyButton = sideScrollObj.transform.GetChild(4).GetChild(1).GetComponent<Button>();
         friday.clearButton = sideScrollObj.transform.GetChild(4).GetChild(2).GetComponent<Button>();
         friday.scrollMask = sideScrollObj.transform.GetChild(4).GetChild(3).gameObject;
-        friday.scrollObj = sideScrollObj.transform.GetChild(4).GetChild(3).GetChild(0).gameObject;
+        friday.scrollObj = sideScrollObj.transform.GetChild(4).GetChild(3).GetChild(0).GetComponent<RectTransform>();
 
         saturday.weekDay = WeekDay.saturday;
         saturday.applyButton = sideScrollObj.transform.GetChild(5).GetChild(1).GetComponent<Button>();
         saturday.clearButton = sideScrollObj.transform.GetChild(5).GetChild(2).GetComponent<Button>();
         saturday.scrollMask = sideScrollObj.transform.GetChild(5).GetChild(3).gameObject;
-        saturday.scrollObj = sideScrollObj.transform.GetChild(5).GetChild(3).GetChild(0).gameObject;
+        saturday.scrollObj = sideScrollObj.transform.GetChild(5).GetChild(3).GetChild(0).GetComponent<RectTransform>();
 
         sunday.weekDay = WeekDay.sunday;
         sunday.applyButton = sideScrollObj.transform.GetChild(6).GetChild(1).GetComponent<Button>();
         sunday.clearButton = sideScrollObj.transform.GetChild(6).GetChild(2).GetComponent<Button>();
         sunday.scrollMask =  sideScrollObj.transform.GetChild(6).GetChild(3).gameObject;
-        sunday.scrollObj =   sideScrollObj.transform.GetChild(6).GetChild(3).GetChild(0).gameObject;
+        sunday.scrollObj =   sideScrollObj.transform.GetChild(6).GetChild(3).GetChild(0).GetComponent<RectTransform>();
 
     }
 }
@@ -323,6 +374,6 @@ public class ScheduleController : MonoBehaviour
     [SerializeField] public Button applyButton;
     [SerializeField] public Button clearButton;
     [SerializeField] public GameObject scrollMask;
-    [SerializeField] public GameObject scrollObj;
+    [SerializeField] public RectTransform scrollObj;
     public int maxScroll = 100;
 } 

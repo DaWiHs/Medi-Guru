@@ -3234,7 +3234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc524cd40f3aa7148942ba00d75d7b58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: https://356a-2a00-f41-7038-95ed-1f39-5ffa-8bcf-b1d6.ngrok-free.app
+  url: https://e740-31-60-106-253.ngrok-free.app
   email: lester_considine@email.com
   password: 123123
   auth: 
@@ -5812,6 +5812,8 @@ GameObject:
   m_Component:
   - component: {fileID: 600095220}
   - component: {fileID: 600095221}
+  - component: {fileID: 600095223}
+  - component: {fileID: 600095222}
   m_Layer: 0
   m_Name: WeekView_Mask
   m_TagString: Untagged
@@ -5854,6 +5856,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: 5, y: 5, z: 5, w: 5}
   m_Softness: {x: 0, y: 0}
+--- !u!114 &600095222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600095219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: fa849a57fe005ab41adf4ecf940e6d7e, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &600095223
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600095219}
+  m_CullTransparentMesh: 1
 --- !u!1 &638152128
 GameObject:
   m_ObjectHideFlags: 0
@@ -8282,8 +8322,6 @@ MonoBehaviour:
   visitPrefab: {fileID: 5218933924605562067, guid: b5200117d05b22d40b4850054256ff0e, type: 3}
   linePrefab: {fileID: 9016715473976762493, guid: 960eb8120e60ec94cb3ad1696f569184, type: 3}
   hourPrefab: {fileID: 6177201586536605757, guid: 7853175f6dee0144494286e6869ccab9, type: 3}
-  sideScrollMask: {fileID: 600095219}
-  sideScrollObj: {fileID: 434058916}
   monday:
     weekDay: 0
     applyButton: {fileID: 901451684}
@@ -8349,6 +8387,10 @@ MonoBehaviour:
     friday: []
     saturday: []
     sunday: []
+  sideScrollMask: {fileID: 600095219}
+  sideScrollObj: {fileID: 434058917}
+  maxSideScroll: -200
+  raycaster: {fileID: 1507282162}
 --- !u!1 &901451682
 GameObject:
   m_ObjectHideFlags: 0
@@ -9641,7 +9683,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1103100513
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12491,7 +12533,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1363178395
 RectTransform:
   m_ObjectHideFlags: 0
