@@ -174,7 +174,22 @@ public enum WeekDay
         sunday.Clear();
     }
 }
+[System.Serializable] public class MGReview
+{
+    public int score; // 1-10
+    public string author;
+    public string posted_on; // "DD.MM.YYYY"
+    public string body;
 
+    public MGReview() { }
+    public MGReview(string _body)
+    {
+        score = 1;
+        author = "ERROR";
+        posted_on = "00.00.0000";
+        body = _body;
+    }
+}
 public class MGApi : MonoBehaviour
 {
     public static string serverURL = "";
@@ -189,6 +204,14 @@ public class MGApi : MonoBehaviour
     {
         yield return WebRequest.Request("POST", serverURL + "/doctors/sign_in",
             JsonConvert.SerializeObject(credentials), response);
+    }
+    public static IEnumerator Logout()
+    {
+        WebResponse response = new WebResponse();
+        yield return WebRequest.Request("DELETE", serverURL + "/doctors/sign_out",
+            "", response);
+        account.serverAuthToken = "";
+        account.email = "";
     }
     /// <summary>
     /// Attempts to register on server.
@@ -251,7 +274,7 @@ public class MGApi : MonoBehaviour
         {
             // params: first_name, last_name, description, specialty_id
             yield return WebRequest.Request("GET", serverURL + "/appointments.json",
-                 JsonConvert.SerializeObject(query), response);
+                 "", response);
         }
         else
         {

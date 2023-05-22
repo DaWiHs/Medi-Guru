@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PopupController : MonoBehaviour
 {
-    public static PopupController instance;
+    static PopupController instance;
 
     [SerializeField] UnityEngine.UI.Text text;
     [SerializeField] GameObject popup;
@@ -19,7 +19,7 @@ public class PopupController : MonoBehaviour
     {
         instance.Popup(message, action);
     }
-    public void Popup(string message, System.Action action)
+    void Popup(string message, System.Action action)
     {
         popup.SetActive(true);
         text.text = message;

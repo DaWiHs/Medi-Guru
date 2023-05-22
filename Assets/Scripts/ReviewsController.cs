@@ -94,28 +94,6 @@ public class ReviewsController : MonoBehaviour
         maxScrollDown = reviews.Count * 110 - 200;
     }
 
-    public void OnActivate()
-    {
-        StartCoroutine(RenderReviews());
-    }
-    public void OnDeactivate()
-    {
-        // TODO
-    }
+    public void OnActivate() { StartCoroutine(RenderReviews()); }
+    public void OnDeactivate() { }
 }
-[System.Serializable] public class MGReview
- {
-    public int score; // 1-10
-    public string author;
-    public string posted_on; // "DD.MM.YYYY"
-    public string body;
-
-    public MGReview() { }
-    public MGReview(string _body)
-    {
-        score = 1;
-        author = "ERROR";
-        posted_on = "00.00.0000";
-        body = _body;
-    }
- }

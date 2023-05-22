@@ -7,7 +7,6 @@ using UnityEngine.EventSystems;
 
 public class ScheduleController : MonoBehaviour
 {
-    public bool Active {get; private set;}
     public static ScheduleController instance;
 
     [Header("Generator References")]
@@ -29,9 +28,9 @@ public class ScheduleController : MonoBehaviour
     [SerializeField] WeekDayObject sunday;
 
     [Space(20)]
-    [Header("Calendar")]
-    [SerializeField] public MGSchedule currentCalendar;
-    [SerializeField] public MGSchedule tempCalendar;
+    [Header("Schedule")]
+    [SerializeField] public MGSchedule currentSchedule;
+    [SerializeField] public MGSchedule tempSchedule;
 
     [Header("SideScroll")]
     private List<WeekDayObject> days;
@@ -54,8 +53,8 @@ public class ScheduleController : MonoBehaviour
         InitiateWeekObjects();
         InitiateButtons();
         days = new List<WeekDayObject> { monday, tuesday, wednesday, thursday, friday, saturday, sunday };
-        currentCalendar = new MGSchedule();
-        tempCalendar = new MGSchedule();
+        currentSchedule = new MGSchedule();
+        tempSchedule = new MGSchedule();
 
     }
 
@@ -113,17 +112,8 @@ public class ScheduleController : MonoBehaviour
 
     }
 
-    public void OnActivate()
-    {
-        Active = true;
-        RenderDays();
-        // TODO
-    }
-    public void OnDeactivate()
-    {
-        Active = false;
-        // TODO
-    }
+    public void OnActivate() { RenderDays(); }
+    public void OnDeactivate() {}
 
     public void RenderDays() { StartCoroutine(_RenderDays()); }
     IEnumerator _RenderDays()
@@ -131,13 +121,13 @@ public class ScheduleController : MonoBehaviour
 
         yield return MGApiHandler.GetSchedule();
         
-        RenderDay(currentCalendar.monday, monday);
-        RenderDay(currentCalendar.tuesday, tuesday);
-        RenderDay(currentCalendar.wednesday, wednesday);
-        RenderDay(currentCalendar.thursday, thursday);
-        RenderDay(currentCalendar.friday, friday);
-        RenderDay(currentCalendar.saturday, saturday);
-        RenderDay(currentCalendar.sunday, sunday);
+        RenderDay(currentSchedule.monday, monday);
+        RenderDay(currentSchedule.tuesday, tuesday);
+        RenderDay(currentSchedule.wednesday, wednesday);
+        RenderDay(currentSchedule.thursday, thursday);
+        RenderDay(currentSchedule.friday, friday);
+        RenderDay(currentSchedule.saturday, saturday);
+        RenderDay(currentSchedule.sunday, sunday);
     }
 
     void RenderDay(List<MGHourMinuteDuration> list, WeekDayObject obj)
@@ -181,9 +171,9 @@ public class ScheduleController : MonoBehaviour
     public void UpdateSchedule()
     {
         // Send web request PUT
-        StartCoroutine(MGApiHandler.SetSchedule(tempCalendar));
+        StartCoroutine(MGApiHandler.SetSchedule(tempSchedule));
         // Copy (no reference) from temp to current
-        currentCalendar = JsonUtility.FromJson<MGSchedule>(JsonUtility.ToJson(tempCalendar));
+        currentSchedule = JsonUtility.FromJson<MGSchedule>(JsonUtility.ToJson(tempSchedule));
     }
 
     /// <summary> Regenerates scheduled visits for given week day </summary>
@@ -241,7 +231,7 @@ public class ScheduleController : MonoBehaviour
             v.GetComponentInChildren<Text>().text = VisitTimeText(currentHour * 60 + currentMinutes, minutesPerVisit);
 
             // Save object
-            tempCalendar.DayAdd(day.weekDay, currentHour, currentMinutes, minutesPerVisit);
+            tempSchedule.DayAdd(day.weekDay, currentHour, currentMinutes, minutesPerVisit);
 
             v.name = "Visit_" + currentHour + "_" + currentMinutes;
 
@@ -252,15 +242,15 @@ public class ScheduleController : MonoBehaviour
 
     }
     /// <summary> Translate hour and minute to "HH:MM" string with leading zeros </summary>
-    private string VisitTimeText(int currentTime, int minutesPerVisit)
+    private string VisitTimeText(int time, int duration)
     {
         string ret = "";
 
-        int hS = currentTime / 60;
-        int hE = (currentTime + minutesPerVisit) / 60;
+        int hS = time / 60;
+        int hE = (time + duration) / 60;
 
-        int mS = currentTime - (hS * 60);
-        int mE = currentTime + minutesPerVisit - (hE * 60);
+        int mS = time - (hS * 60);
+        int mE = time + duration - (hE * 60);
 
         ret += hS + ":";
         if (mS < 10) ret += "0" + mS;
@@ -289,7 +279,7 @@ public class ScheduleController : MonoBehaviour
     public void ClearDay(WeekDayObject day)
     {
         DerenderDay(day);
-        tempCalendar.ClearDay(day.weekDay);
+        tempSchedule.ClearDay(day.weekDay);
     }
 
 

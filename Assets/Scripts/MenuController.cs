@@ -25,7 +25,7 @@ public class MenuController : MonoBehaviour
 
     [Header("Visits")]
     [SerializeField] private Button _visitsButton;
-    [SerializeField] private AppointmentsController _visitsScript;
+    [SerializeField] private AppointmentsController _appointmentsScript;
     [SerializeField] private GameObject _visitsParent;
 
     [Header("Reviews")]
@@ -39,19 +39,12 @@ public class MenuController : MonoBehaviour
     [SerializeField] private Color _activeTextColor;
     [SerializeField] private Color _inactiveTextColor;
 
-    // Start is called before the first frame update
     void Start()
     {
         _scheduleButton.onClick.AddListener(delegate { OpenMenu(MenuState.schedule); });
         _profileButton.onClick.AddListener(delegate { OpenMenu(MenuState.profile); });
         _visitsButton.onClick.AddListener(delegate { OpenMenu(MenuState.visits); });
         _reviewsButton.onClick.AddListener(delegate { OpenMenu(MenuState.reviews); });
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void CloseAll()
@@ -69,7 +62,7 @@ public class MenuController : MonoBehaviour
         _visitsParent.SetActive(false);
         _visitsButton.GetComponent<Image>().color = _inactiveButtonColor;
         _visitsButton.GetComponentInChildren<Text>().color = _inactiveTextColor;
-        _visitsScript.OnDeactivate();
+        _appointmentsScript.OnDeactivate();
 
         _reviewsParent.SetActive(false);
         _reviewsButton.GetComponent<Image>().color = _inactiveButtonColor;
@@ -101,7 +94,7 @@ public class MenuController : MonoBehaviour
                 _visitsParent.SetActive(true);
                 _visitsButton.GetComponent<Image>().color = _activeButtonColor;
                 _visitsButton.GetComponentInChildren<Text>().color = _activeTextColor;
-                _visitsScript.OnActivate();
+                _appointmentsScript.OnActivate();
                 break;
 
             case MenuState.reviews:

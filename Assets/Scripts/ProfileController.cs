@@ -39,17 +39,14 @@ public class ProfileController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         profileName.onValueChanged.AddListener(delegate { UpdateName(); });
         profileSurname.onValueChanged.AddListener(delegate { UpdateName(); });
         profileDescription.onValueChanged.AddListener(delegate { UpdateDescription(); });
-
     }
 
     // Update is called once per frame
     void Update()
     {
-
         if (unsavedChanges)
         {
             SaveButtonBlink();
@@ -60,10 +57,7 @@ public class ProfileController : MonoBehaviour
     {
         UpdateProfile();
     }
-    public void OnDeactivate()
-    {
-        // TODO
-    }
+    public void OnDeactivate() {}
     public void UpdateProfileUI()
     {
         profileName.text = currentProfile.first_name;

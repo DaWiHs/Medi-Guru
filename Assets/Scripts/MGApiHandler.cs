@@ -41,8 +41,6 @@ public class MGApiHandler : MonoBehaviour
         appView.SetActive(false);
         loginView.SetActive(true);
     }
-    public void OpenDebugMenu() { debugMenu.SetActive(true); }
-    public void CloseDebugMenu() { debugMenu.SetActive(false); }
     public void ApplyURL()
     {
         Debug.Log("API URL set");
@@ -99,6 +97,10 @@ public class MGApiHandler : MonoBehaviour
     {
         PopupController.MakePopup("Błąd logowania: " + message, null);
     }
+    public void Logout() { 
+        StartCoroutine(MGApi.Logout());
+        OpenLoginView();
+    }
 
     //// REGISTER
     public void Register() { StartCoroutine(_Register()); }
@@ -153,8 +155,8 @@ public class MGApiHandler : MonoBehaviour
             string serial = JsonConvert.SerializeObject(docSchedule.schedule);
 
             // Copy (no reference) from docSchedule.schedule to out schedule
-            ScheduleController.instance.currentCalendar = JsonConvert.DeserializeObject<MGSchedule>(serial);
-            ScheduleController.instance.tempCalendar = JsonConvert.DeserializeObject<MGSchedule>(serial);
+            ScheduleController.instance.currentSchedule = JsonConvert.DeserializeObject<MGSchedule>(serial);
+            ScheduleController.instance.tempSchedule = JsonConvert.DeserializeObject<MGSchedule>(serial);
         }
         else
         {
@@ -234,7 +236,7 @@ public class MGApiHandler : MonoBehaviour
     {
         WebResponse response = new WebResponse();
         MGAppointmentsQuery query = new MGAppointmentsQuery();
-        query.on_date = "17.05.2023";
+        query.on_date = "";
 
         yield return MGApi.GetAppointments(response, query);
 

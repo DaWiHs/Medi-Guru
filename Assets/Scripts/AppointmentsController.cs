@@ -7,8 +7,6 @@ using System;
 
 public class AppointmentsController : MonoBehaviour
 {
-    public bool Active { get; private set; }
-
     [Header("Prefabs")]
     [SerializeField] private GameObject linePrefab;
     [SerializeField] private GameObject hourPrefab;
@@ -48,24 +46,11 @@ public class AppointmentsController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!Active) return;
-
         ScrollControl();
     }
 
-    public void OnActivate()
-    {
-        Active = true;
-        RenderVisits();
-        StartCoroutine(_GetAppointments());
-        // TODO
-    }
-    public void OnDeactivate()
-    {
-        Active = false;
-        RemoveRender();
-        // TODO
-    }
+    public void OnActivate() { StartCoroutine(_GetAppointments()); }
+    public void OnDeactivate() { RemoveRender(); }
 
     private void ScrollControl()
     {
@@ -171,18 +156,19 @@ public class AppointmentsController : MonoBehaviour
 
         previewHour.text = VisitTimeText(a.time.Hour * 60 + a.time.Minute, a.duration / 60);
         previewName.text = a.patient_name;
+        previewDescription.text = "";
 
     }
 
-    private string VisitTimeText(int currentTime, int duration)
+    private string VisitTimeText(int time, int duration)
     {
         string ret = "";
 
-        int hS = currentTime / 60;
-        int hE = (currentTime + duration) / 60;
+        int hS = time / 60;
+        int hE = (time + duration) / 60;
 
-        int mS = currentTime - (hS * 60);
-        int mE = currentTime + duration - (hE * 60);
+        int mS = time - (hS * 60);
+        int mE = time + duration - (hE * 60);
 
         ret += hS + ":";
         if (mS < 10) ret += "0" + mS;
@@ -205,4 +191,19 @@ public class AppointmentsController : MonoBehaviour
         RenderVisits();
     }
 
+}
+[System.Serializable] public class VisitObject
+{
+    public int index;
+    public GameObject objectReference;
+    public int startTime;
+    public int duration;
+
+    public VisitObject(int index, int startTime, int duration, GameObject objectReference)
+    {
+        this.index = index;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.objectReference = objectReference;
+    }
 }
